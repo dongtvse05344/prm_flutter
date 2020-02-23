@@ -1,34 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:prm_flutter/bloc/cartBloc.dart';
+import 'package:prm_flutter/bloc/product.detail.bloc.dart';
 import 'package:prm_flutter/bloc/productBloc.dart';
 import 'package:prm_flutter/model/product.dart';
+import 'package:prm_flutter/screen/cart/cart.screen.dart';
+import 'package:prm_flutter/screen/product/widget/BottomSheetConfirm.dart';
 import 'package:prm_flutter/service/apiEnv.dart';
 import 'package:prm_flutter/style/colors.dart';
 import 'package:prm_flutter/style/texts.dart';
+import 'package:provider/provider.dart';
 
 class ProductDetailScreen extends StatefulWidget {
+  final int id;
+
+  ProductDetailScreen({@required this.id});
+
   @override
   _ProductDetailScreenState createState() => _ProductDetailScreenState();
 }
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
-  ProductBloc _productBloc = ProductBloc.getInstance();
+  ProductDetailBloc _bloc = new ProductDetailBloc();
   String _seletedImage;
-  final scrollController = ScrollController();
+  final scrollController = new ScrollController();
   double barOpacity = 0;
-  int sizeTop =20;
-
+  int sizeTop = 20;
   Product _product;
+
+  initData() async {
+    await _bloc.getProduct(widget.id);
+    _product = _bloc.product;
+    _bloc.getProductImage();
+    ProductDetailBloc.setInstance(_bloc);
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _product = _productBloc.seletedProduct;
-    _seletedImage = _productBloc.seletedProduct.bannerPath;
-    scrollController.addListener(onScroll);
-    _productBloc.getProductImage();
+    initData();
   }
 
-  void changeSeletedImage(String image){
+  void changeSeletedImage(String image) {
     setState(() {
       _seletedImage = image;
     });
@@ -37,145 +50,224 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   void goBack() {
     Navigator.of(context).pop();
   }
+
   void onScroll() {
     var tempOpacity = scrollController.position.pixels;
-    if(tempOpacity <= sizeTop && barOpacity == 1){
+    if (tempOpacity <= sizeTop && barOpacity == 1) {
       setState(() {
         barOpacity = 0;
       });
-    }
-    else if(tempOpacity >sizeTop && barOpacity == 0){
+    } else if (tempOpacity > sizeTop && barOpacity == 0) {
       setState(() {
         barOpacity = 1;
       });
     }
   }
-  onAddToCart() {
 
+  goToCartScreen() {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => CartScreen(),
+    ));
   }
+
+  onAddToCart() {
+    showModalBottomSheet<Null>(
+        context: context,
+        builder: (BuildContext context) {
+          return Theme(
+              data: Theme.of(context).copyWith(canvasColor: Colors.white),
+              child: BottomSheetConfirm());
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context);
-    return  Scaffold(
+    return Scaffold(
       extendBody: true,
       body: SafeArea(
         child: Stack(
           children: <Widget>[
             SingleChildScrollView(
               controller: scrollController,
-              child: Column(
-                children: <Widget>[
-                  Stack(
-                    children: <Widget>[
-                      Container(
-                        height: 200,
-                        width: double.infinity,
-                        child:
-                        Image.network("${Env.imageEndPoint}${_seletedImage}", fit: BoxFit.cover,),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        right: 20,
-                        child: Container(
-                          height: 40,
-                          width: 40,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          child: Icon(Icons.error,),
-                        ),
-                      )
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Row(
-                          children: <Widget>[
-                            Icon(Icons.gavel,color: Colors.lightGreen,),
-                            Text(" Shop loved",style: TextStyle(color: Colors.lightGreen),)
-                          ],
-                        ),
-                        SizedBox(height: 10,),
-                        Text("${_product.name}",style: MyText.pageTitle,),
-                        Text("${_product.description}",style: TextStyle(color: Colors.grey),),
-                        Row(
-                          children: <Widget>[
-                            Icon(Icons.favorite,color: Colors.yellow,),
-                            Text("${_product.star}"),
-                            SizedBox(width:20,),
-                            Icon(Icons.timelapse,color: Colors.grey,),
-                            Text("\$ ${_product.currentPrice}"),
-                          ],
-                        ),
-                        Divider(),
-                        Row(
-                          children: <Widget>[
-                            Icon(Icons.loyalty,color: Colors.grey,),
-                            Text(" Special discount for combo"),
-                          ],
-                        ),
-                        SizedBox(height: 20,),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text("Images", style: MyText.cardTitle,),
-                          ],
-                        ),
-                        Container(
-                          height: 100,
-                          child: StreamBuilder(
-                              initialData: _productBloc.images,
-                              stream: _productBloc.imagesStream,
-                              builder: (context, snapshot) {
-                              if(snapshot.hasData){
-                                List<String> data = snapshot.data;
-                                return ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: data.length,
-                                  itemBuilder: (context, index){
-                                    return InkWell(
-                                      onTap: ()=>changeSeletedImage(data[index]),
-                                      child: Container(
-                                        width: 50,
-                                        height: 50,
-                                        margin: EdgeInsets.only(right: 30),
-                                        child: Image.network("${Env.imageEndPoint}${data[index]}"),
-                                      ),
-                                    );
-                                  },
-                                );
-                              }else {
-                                return Text("Loading ...");
-                              }
-                            }
-                          ),
-                        ),
-                        Container(height: 20,width: double.infinity,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text("My services", style: MyText.cardTitle,),
-                          ],
-                        ),
-                        Container(
-                          child: ListView(
-                            scrollDirection: Axis.vertical,
-                            physics: NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
+              child: StreamBuilder(
+                  stream: _bloc.productStream,
+                  initialData: _bloc.product,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      Product _product = snapshot.data;
+                      return Column(
+                        children: <Widget>[
+                          Stack(
                             children: <Widget>[
+                              Container(
+                                height: 200,
+                                width: double.infinity,
+                                child: AnimatedSwitcher(
+                                  duration: Duration(milliseconds: 300),
+                                  child:
+                                  _seletedImage ==null ?
+                                  Image.network(
+                                    "${Env.imageEndPoint}${_product.bannerPath}",
+                                    fit: BoxFit.cover,
+                                  ) :
+                                  Image.network(
+                                    "${Env.imageEndPoint}${_seletedImage}",
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                bottom: 0,
+                                right: 20,
+                                child: Container(
+                                  height: 40,
+                                  width: 40,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                                  child: Icon(
+                                    Icons.error,
+                                  ),
+                                ),
+                              )
                             ],
                           ),
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 20),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Row(
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.gavel,
+                                      color: Colors.lightGreen,
+                                    ),
+                                    Text(
+                                      " Shop loved",
+                                      style:
+                                          TextStyle(color: Colors.lightGreen),
+                                    )
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  "${_product.name}",
+                                  style: MyText.pageTitle,
+                                ),
+                                Text(
+                                  "${_product.description}",
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                                Row(
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.favorite,
+                                      color: Colors.yellow,
+                                    ),
+                                    Text("${_product.star}"),
+                                    SizedBox(
+                                      width: 20,
+                                    ),
+                                    Icon(
+                                      Icons.timelapse,
+                                      color: Colors.grey,
+                                    ),
+                                    Text("\$ ${_product.currentPrice}"),
+                                  ],
+                                ),
+                                Divider(),
+                                Row(
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.loyalty,
+                                      color: Colors.grey,
+                                    ),
+                                    Text(" Special discount for combo"),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Text(
+                                      "Images",
+                                      style: MyText.cardTitle,
+                                    ),
+                                  ],
+                                ),
+                                Container(
+                                  height: 100,
+                                  child: StreamBuilder(
+                                      initialData: _bloc.images,
+                                      stream: _bloc.imagesStream,
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasData) {
+                                          List<String> data = snapshot.data;
+                                          return ListView.builder(
+                                            scrollDirection: Axis.horizontal,
+                                            itemCount: data.length,
+                                            itemBuilder: (context, index) {
+                                              return InkWell(
+                                                onTap: () => changeSeletedImage(
+                                                    data[index]),
+                                                child: Container(
+                                                  width: 50,
+                                                  height: 50,
+                                                  margin: EdgeInsets.only(
+                                                      right: 30),
+                                                  child: Image.network(
+                                                      "${Env.imageEndPoint}${data[index]}"),
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        } else {
+                                          return Text("Loading ...");
+                                        }
+                                      }),
+                                ),
+                                Container(
+                                  height: 20,
+                                  width: double.infinity,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Text(
+                                      "My services",
+                                      style: MyText.cardTitle,
+                                    ),
+                                  ],
+                                ),
+                                Container(
+                                  child: ListView(
+                                    scrollDirection: Axis.vertical,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    children: <Widget>[],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      );
+                    } else {
+                      return Container(
+                        child: Text("Loading ..."),
+                      );
+                    }
+                  }),
             ),
             Positioned(
               height: 50,
@@ -184,18 +276,16 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 children: <Widget>[
                   AnimatedOpacity(
                     duration: Duration(milliseconds: 500),
-                    opacity: barOpacity >1?1:barOpacity,
+                    opacity: barOpacity > 1 ? 1 : barOpacity,
                     child: Container(
                       decoration: BoxDecoration(
                           color: Colors.white,
                           boxShadow: [
                             BoxShadow(
                                 color: Colors.grey,
-                                offset: Offset(5,0),
-                                blurRadius: 5
-                            )
-                          ]
-                      ),
+                                offset: Offset(5, 0),
+                                blurRadius: 5)
+                          ]),
                     ),
                   ),
                   Container(
@@ -204,13 +294,19 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       children: <Widget>[
                         IconButton(
                           onPressed: goBack,
-                          icon: Icon(Icons.arrow_back_ios,),
+                          icon: Icon(
+                            Icons.arrow_back_ios,
+                          ),
                         ),
                         Text(
-                          "Shop booking",style: MyText.cardTitle,
+                          "Shop booking",
+                          style: MyText.cardTitle,
                         ),
                         IconButton(
-                          icon: Icon(Icons.favorite_border,),
+                          icon: Icon(
+                            Icons.shopping_cart,
+                          ),
+                          onPressed: goToCartScreen,
                         ),
                       ],
                     ),
@@ -230,9 +326,17 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Icon(Icons.shopping_cart,color: Colors.white,),
-                        SizedBox(width: 5,),
-                        Text("Add to Cart",style: MyText.bottomBarTitle,),
+                        Icon(
+                          Icons.shopping_cart,
+                          color: Colors.white,
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          "Add to Cart",
+                          style: MyText.bottomBarTitle,
+                        ),
                       ],
                     ),
                   ),
@@ -240,7 +344,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               ),
             )
           ],
-
         ),
       ),
     );
@@ -249,7 +352,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   @override
   void dispose() {
     scrollController.removeListener(onScroll);
-    _productBloc.disposeImage();
+    _bloc.dispose();
     super.dispose();
   }
 }

@@ -13,7 +13,7 @@ class ProductBloc {
   Product seletedProduct;
   List<String> images;
 
-  var _productsController = StreamController();
+  var _productsController = StreamController.broadcast();
   Stream get productsStream => _productsController.stream;
 
   var _imagesController = StreamController();
@@ -58,10 +58,12 @@ class ProductBloc {
       _imagesController.sink.add(images);
     });
   }
+
   void dispose(){
     _productsController.close();
     _productController.close();
   }
+
   void disposeImage(){
     _imagesController.close();
   }

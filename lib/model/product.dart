@@ -4,6 +4,10 @@ class Product {
   double star;
   double currentPrice,oldPrice;
   bool isSale;
+  int quantity;
+
+  String size;
+  String color;
 
 
   Product({this.id, this.name, this.bannerPath, this.description, this.star,

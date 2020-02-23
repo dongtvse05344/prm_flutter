@@ -21,8 +21,9 @@ class _ProductCardState extends State<ProductCard> {
 
   onTap() {
     _productBloc.setSelectedProduct(widget.product);
+    print(widget.product.id);
     Navigator.of(context).push(MaterialPageRoute(
-       builder:(context)=> ProductDetailScreen()
+       builder:(context)=> ProductDetailScreen(id:widget.product.id)
     ));
   }
   @override

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:prm_flutter/bloc/categoryBloc.dart';
 import 'package:prm_flutter/bloc/productBloc.dart';
 import 'package:prm_flutter/model/product.dart';
+import 'package:prm_flutter/screen/cart/cart.screen.dart';
 import 'package:prm_flutter/screen/home/widget/carouselCard.dart';
 import 'package:prm_flutter/screen/home/widget/categoryCard.dart';
 import 'package:prm_flutter/screen/home/widget/productCard.dart';
@@ -28,6 +29,11 @@ class _HomeFragmentState extends State<HomeFragment>
     _categoryBloc.getCategories();
     _productBloc.getTopProducts();
   }
+  goToCartScreen(){
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) =>CartScreen(),
+    ));
+  }
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -46,34 +52,42 @@ class _HomeFragmentState extends State<HomeFragment>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Text('WEOZ', style: MyText.title,),
-                    Container(
-                      width: 200,
-                      height: 40,
-                      child: TextField(
-                        textInputAction: TextInputAction.search,
-                        maxLines: 1,
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(vertical: 2,horizontal: 10),
-                          hintText: "Search",
-                          alignLabelWithHint: true,
-                          hintStyle: TextStyle(),
-                          suffixIcon: Icon(Icons.search),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: MyColor.firstColor
-                            ),
-                            borderRadius: BorderRadius.all(Radius.circular(20))
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Colors.transparent
+                    Row(
+                      children: <Widget>[
+                        Container(
+                          width: 200,
+                          height: 40,
+                          child: TextField(
+                            textInputAction: TextInputAction.search,
+                            maxLines: 1,
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.symmetric(vertical: 2,horizontal: 10),
+                              hintText: "Search",
+                              alignLabelWithHint: true,
+                              hintStyle: TextStyle(),
+                              suffixIcon: Icon(Icons.search),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: MyColor.firstColor
+                                ),
+                                borderRadius: BorderRadius.all(Radius.circular(20))
                               ),
-                              borderRadius: BorderRadius.all(Radius.circular(20)),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Colors.transparent
+                                  ),
+                                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                              ),
+                              filled: true,
+                              fillColor: Colors.black12
+                            ),
                           ),
-                          filled: true,
-                          fillColor: Colors.black12
                         ),
-                      ),
+                        IconButton(
+                          icon: Icon(Icons.shopping_cart),
+                          onPressed: goToCartScreen,
+                        )
+                      ],
                     ),
 
                   ],
