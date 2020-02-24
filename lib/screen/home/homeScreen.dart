@@ -20,14 +20,12 @@ class _HomeScreenState extends State<HomeScreen> {
   CategoryBloc _categoryBloc = CategoryBloc.getInstance();
   PageController _pageController = new PageController();
   SharedPreferences prefs;
-  Widget body;
   int bottom_nav_index = 0;
   String _appLabel = "Home";
 
 
   @override
   void initState() {
-    body = new HomeFragment();
   }
 
   initToken() async {
@@ -45,14 +43,8 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       bottom_nav_index = index;
     });
-    _pageController.jumpToPage(index);
-    switch(index){
-      case 0: body = new HomeFragment(); break;
-      case 1:body = new FavoriteFragment(); break;
-      case 2:body = new ActivityFragment(); break;
-      case 3:body = new AccountFragment(); break;
-      default: body = new HomeFragment();
-    }
+    _pageController.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.easeIn);
+
   }
   @override
   Widget build(BuildContext context) {

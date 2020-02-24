@@ -299,7 +299,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           ),
                         ),
                         Text(
-                          "Shop booking",
+                          "",
                           style: MyText.cardTitle,
                         ),
                         IconButton(

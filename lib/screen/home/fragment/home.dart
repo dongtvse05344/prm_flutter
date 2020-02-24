@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prm_flutter/bloc/categoryBloc.dart';
+import 'package:prm_flutter/bloc/collection.bloc.dart';
 import 'package:prm_flutter/bloc/productBloc.dart';
 import 'package:prm_flutter/model/product.dart';
 import 'package:prm_flutter/screen/cart/cart.screen.dart';
@@ -21,6 +22,7 @@ class _HomeFragmentState extends State<HomeFragment>
     with AutomaticKeepAliveClientMixin<HomeFragment> {
   CategoryBloc _categoryBloc = CategoryBloc.getInstance();
   ProductBloc _productBloc = ProductBloc.getInstance();
+  CollectionBloc _collectionBloc;
 
   @override
   void initState() {
@@ -28,6 +30,7 @@ class _HomeFragmentState extends State<HomeFragment>
     super.initState();
     _categoryBloc.getCategories();
     _productBloc.getTopProducts();
+
   }
   goToCartScreen(){
     Navigator.of(context).push(MaterialPageRoute(
@@ -36,10 +39,9 @@ class _HomeFragmentState extends State<HomeFragment>
   }
   @override
   Widget build(BuildContext context) {
+    _collectionBloc = Provider.of<CollectionBloc>(context,listen: false);
     return SafeArea(
       child: Container(
-        decoration: BoxDecoration(
-        ),
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 10),
@@ -51,7 +53,7 @@ class _HomeFragmentState extends State<HomeFragment>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text('WEOZ', style: MyText.title,),
+                    Text('BRIDGE', style: MyText.title,),
                     Row(
                       children: <Widget>[
                         Container(
@@ -93,29 +95,24 @@ class _HomeFragmentState extends State<HomeFragment>
                   ],
                 ),
                 SizedBox(height: 10,),
-//                FutureBuilder(
-//                  future: _categoryBloc.getCarouselBanner(),
-//                  builder: (context, snapshot){
-//                    if(snapshot.hasData) {
-//                      List<String> data = snapshot.data;
-//                      return CarouselSlider(
-//                        height: 200.0,
-//                        enlargeCenterPage: true,
-//                        items: data.map((i) {
-//                          return Builder(
-//                            builder: (BuildContext context) {
-//                              return CarouselCard(i);
-//                            },
-//                          );
-//                        }).toList(),
-//                      );
-//
-//                    }
-//                    else {
-//                      return Text('Loading');
-//                    }
-//                  },
-//                ),
+                Consumer<CollectionBloc>(
+                  builder: (context, _bloc, child){
+                    var collection = _bloc.collection;
+                    if(collection ==null) return Text("...");
+                    print(collection.length);
+                      return CarouselSlider(
+                        height: 200.0,
+                        enlargeCenterPage: true,
+                        items: collection.map((i) {
+                          return Builder(
+                            builder: (BuildContext context) {
+                              return CarouselCard(i);
+                            },
+                          );
+                        }).toList(),
+                      );
+                  },
+                ),
                 SizedBox(height: 10,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -153,7 +150,7 @@ class _HomeFragmentState extends State<HomeFragment>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    Text('Recommended Shop', style: MyText.title,),
+                    Text('New arrival', style: MyText.title,),
                     Text('More'),
 
                   ],

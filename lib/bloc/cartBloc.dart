@@ -17,6 +17,7 @@ class CartBloc with ChangeNotifier {
     if (_cart.containsKey(product.id)) {
       _cart.remove(product.id);
       notifyListeners();
+      print("-- cart remove");
     }
   }
 }
