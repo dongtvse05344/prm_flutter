@@ -52,25 +52,12 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.of(context).pop();
     }
   }
-
-  initToken() async {
-    print('login - init');
-    SharedPreferences.setMockInitialValues({});
-    prefs = await SharedPreferences.getInstance();
-    String token = prefs.get(AppEnv.TOKEN);
-    if(token !=null) {
-      setState(() {
-        _appLabel = token;
-      });
-    }
-  }
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _usernamefocusNode.addListener(usernameTap);
     _passwordfocusNode.addListener(usernameTap);
-    initToken();
   }
   @override
   Widget build(BuildContext context) {
