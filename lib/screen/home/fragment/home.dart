@@ -56,37 +56,12 @@ class _HomeFragmentState extends State<HomeFragment>
                     Text('BRIDGE', style: MyText.title,),
                     Row(
                       children: <Widget>[
-                        Container(
-                          width: 200,
-                          height: 40,
-                          child: TextField(
-                            textInputAction: TextInputAction.search,
-                            maxLines: 1,
-                            decoration: InputDecoration(
-                              contentPadding: EdgeInsets.symmetric(vertical: 2,horizontal: 10),
-                              hintText: "Search",
-                              alignLabelWithHint: true,
-                              hintStyle: TextStyle(),
-                              suffixIcon: Icon(Icons.search),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: MyColor.firstColor
-                                ),
-                                borderRadius: BorderRadius.all(Radius.circular(20))
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Colors.transparent
-                                  ),
-                                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                              ),
-                              filled: true,
-                              fillColor: Colors.black12
-                            ),
-                          ),
+                        IconButton(
+                          icon: Icon(Icons.search,color: MyColor.firstColor),
+                          onPressed: goToCartScreen,
                         ),
                         IconButton(
-                          icon: Icon(Icons.shopping_cart),
+                          icon: Icon(Icons.shopping_cart, color: MyColor.firstColor,),
                           onPressed: goToCartScreen,
                         )
                       ],

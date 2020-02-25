@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class Token {
   List<String> role;
   String fullname;
@@ -12,11 +14,17 @@ class Token {
 
   factory Token.fromJson(Map<String, dynamic> json) {
     return Token(
-      role: json["role"],
       fullname: json["fullname"],
       access_token: json["access_token"],
       expires_in: json["expires_in"]
     );
   }
+
+  @override
+  String toString() {
+    return '{role: $role, fullname: $fullname, access_token: $access_token, expires_in: $expires_in}';
+  }
+
+
 }
 

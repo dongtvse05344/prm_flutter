@@ -28,9 +28,6 @@ class _ActivityFragmentState extends State<ActivityFragment> {
                 Text("5 Feb 2020",style: TextStyle( fontWeight: FontWeight.bold,fontSize: 18))
               ],
             ),
-            MyBox(),
-            MyBox(),
-            MyBox(),
 
           ],
         ),

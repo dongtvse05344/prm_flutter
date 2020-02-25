@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prm_flutter/bloc/product.search.bloc.dart';
+import 'package:prm_flutter/screen/cart/cart.screen.dart';
 import 'package:prm_flutter/screen/product/widget/product.card.dart';
 import 'package:prm_flutter/service/apiEnv.dart';
 import 'package:prm_flutter/style/colors.dart';
@@ -11,6 +12,12 @@ class ProductSearchScreen extends StatefulWidget {
 }
 
 class _ProductSearchScreenState extends State<ProductSearchScreen> {
+  goToCartScreen(){
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) =>CartScreen(),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,6 +34,10 @@ class _ProductSearchScreenState extends State<ProductSearchScreen> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.search,color: Colors.white,),
+          ),
+          IconButton(
+            icon: Icon(Icons.shopping_cart, ),
+            onPressed: goToCartScreen,
           )
         ],
       ),

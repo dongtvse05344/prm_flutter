@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:prm_flutter/bloc/authBloc.dart';
+import 'package:prm_flutter/bloc/auth.bloc.dart';
 import 'package:prm_flutter/screen/auth/widget/loginButton.dart';
 import 'package:prm_flutter/screen/auth/widget/socialButton.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -8,6 +8,7 @@ import 'package:prm_flutter/service/appEnv.dart';
 import 'package:prm_flutter/service/authService.dart';
 import 'package:prm_flutter/widget/LoadingDialog.dart';
 import 'package:prm_flutter/widget/MessageDialog.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -17,7 +18,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   SharedPreferences prefs;
-  final AuthBloc _authBloc = AuthBloc.getInstance();
+  AuthBloc _authBloc;
   final FocusNode _usernamefocusNode = FocusNode();
   final FocusNode _passwordfocusNode = FocusNode();
   final TextEditingController _usernameController = new TextEditingController();
@@ -35,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
   _onLoginButtonClick() async {
     var username = _usernameController.text;
     var password = _passwordController.text;
-    _authBloc.fetchToken(username, password);
+    _authBloc.fetchToken(username, password,tokenListener);
   }
   tokenListener(data) {
     switch(data) {
@@ -48,9 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
         break;
       case AuthBloc.OK:
         LoadingDialog.hideLoadingDialog(context);
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => HomeScreen()
-        ));
+        Navigator.of(context).pop();
     }
   }
 
@@ -71,11 +70,11 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
     _usernamefocusNode.addListener(usernameTap);
     _passwordfocusNode.addListener(usernameTap);
-    _authBloc.statusStream.listen(tokenListener);
     initToken();
   }
   @override
   Widget build(BuildContext context) {
+    _authBloc = Provider.of<AuthBloc>(context);
     final size = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -223,6 +222,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void dispose() {
     _authBloc.dispose();
+    super.dispose();
   }
 
 

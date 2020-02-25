@@ -8,7 +8,6 @@ class Collection {
 
   factory Collection.fromJson(Map<String, dynamic> json) {
     String startDateString = json["StartDate"];
-    print(startDateString);
     return Collection(
       id: json["Id"],
       name: json["Name"],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:prm_flutter/bloc/auth.bloc.dart';
 import 'package:prm_flutter/bloc/cartBloc.dart';
 import 'package:prm_flutter/bloc/collection.bloc.dart';
 import 'package:prm_flutter/bloc/product.search.bloc.dart';
@@ -27,6 +28,9 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider<ProductSearchBloc>(
           create: (context)=> ProductSearchBloc(),
         ),
+        ChangeNotifierProvider<AuthBloc>(
+          create: (context)=> AuthBloc(),
+        )
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
