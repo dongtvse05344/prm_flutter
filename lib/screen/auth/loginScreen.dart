@@ -17,7 +17,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  SharedPreferences prefs;
   AuthBloc _authBloc;
   final FocusNode _usernamefocusNode = FocusNode();
   final FocusNode _passwordfocusNode = FocusNode();
@@ -208,7 +207,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
-    _authBloc.dispose();
     super.dispose();
   }
 

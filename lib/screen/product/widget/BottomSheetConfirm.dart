@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:prm_flutter/bloc/cartBloc.dart';
+import 'package:prm_flutter/bloc/cart.bloc.dart';
 import 'package:prm_flutter/bloc/product.detail.bloc.dart';
 import 'package:prm_flutter/bloc/productBloc.dart';
 import 'package:prm_flutter/model/color.dart';

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:prm_flutter/bloc/auth.bloc.dart';
-import 'package:prm_flutter/bloc/cartBloc.dart';
+import 'package:prm_flutter/bloc/cart.bloc.dart';
+import 'package:prm_flutter/bloc/user.bloc.dart';
 import 'package:prm_flutter/model/product.dart';
 import 'package:prm_flutter/screen/auth/loginScreen.dart';
 import 'package:prm_flutter/screen/cart/widget/product.card.dart';
 import 'package:prm_flutter/screen/home/homeScreen.dart';
-import 'package:prm_flutter/screen/order.address.screen.dart';
+import 'package:prm_flutter/screen/cart/order.address.screen.dart';
 import 'package:prm_flutter/service/apiEnv.dart';
 import 'package:prm_flutter/style/colors.dart';
 import 'package:prm_flutter/style/texts.dart';
@@ -18,108 +20,156 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   AuthBloc _authBloc;
-  addToCart() {
-//    if(_authBloc.isLogin) {
-//      Navigator.push(context, MaterialPageRoute(
-//          builder: (context) => OrderAddressScreen()
-//      ));
-//    }
-//    else {
-//      Navigator.push(context, MaterialPageRoute(
-//        builder: (context) => LoginScreen()
-//      ));
-//    }
+  UserBloc _userBloc;
+  CartBloc _cartBloc;
+  addToCart() async {
+    if (await _authBloc.isLogin() == AuthBloc.OK) {
+      if (_userBloc.user == null) await _userBloc.getUserData(_authBloc.token);
+      _cartBloc.setAddress(_userBloc.user.homeAddress);
+
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => OrderAddressScreen()));
+    } else {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => LoginScreen()));
+    }
   }
+  backToHome() {
+    Navigator.popUntil(
+        context, (Route<dynamic> route) => route.isFirst);
+  }
+
   @override
   Widget build(BuildContext context) {
     _authBloc = Provider.of<AuthBloc>(context);
-    var bloc = Provider.of<CartBloc>(context);
-    var cart = bloc.cart;
+    _userBloc = Provider.of<UserBloc>(context);
+    _cartBloc = Provider.of<CartBloc>(context);
+
     var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your cart'),
         backgroundColor: MyColor.firstColor,
         leading: IconButton(
-          onPressed: () {
-//            Navigator.of(context).push(MaterialPageRoute(
-//                builder: (context)=> HomeScreen(),
-//            ));
-            Navigator.popUntil(context, (Route<dynamic> route) => route.isFirst);
-          },
+          onPressed: backToHome,
           icon: Icon(Icons.home),
         ),
       ),
       body: Stack(
         children: <Widget>[
-          SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.all(16),
-                  child: Text("Your product: ",style: TextStyle(color: MyColor.firstColor,fontSize: 24),),
-                ),
-                Container(
-                  padding: EdgeInsets.only(bottom: 50),
-                  child: Consumer<CartBloc>(
-                    builder: (context, cartBloc, child) {
-                      var cart = cartBloc.cart;
-                      if(cart.length >0) {
-                        return ListView.separated(
-                            physics: NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            separatorBuilder: (context, index) => Divider(),
-                            scrollDirection: Axis.vertical,
-                            itemCount: cart.length,
-                            itemBuilder: (context, index) {
-                              int giftIndex = cart.keys.toList()[index];
-                              Product product = cart[giftIndex];
-                              return ProductCard(product);
-                            }
-                        );
-                      } else {
-                        return
-                            Container(
-                              child: Center(child: Text("Your cart is empty"),),
-                            );
-                      }
-
-                    },
+          Container(
+            constraints: BoxConstraints.expand(),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.all(16),
+                    child: Text(
+                      "Your product: ",
+                      style: TextStyle(color: MyColor.firstColor, fontSize: 24),
+                    ),
                   ),
-                ),
-              ],
+                  Container(
+                    padding: EdgeInsets.only(bottom: 50),
+                    child: Consumer<CartBloc>(
+                      builder: (context, cartBloc, child) {
+                        var cart = cartBloc.cart;
+                        if (cart.length > 0) {
+                          return ListView.separated(
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              separatorBuilder: (context, index) => Divider(),
+                              scrollDirection: Axis.vertical,
+                              itemCount: cart.length,
+                              itemBuilder: (context, index) {
+                                int giftIndex = cart.keys.toList()[index];
+                                Product product = cart[giftIndex];
+                                return ProductCard(product);
+                              });
+                        } else {
+                          return Container(
+                            child: Center(
+                              child: Text("Your cart is empty"),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           Positioned(
-            bottom: 0,
-            height: 50,
-            width: size.width,
-            child: InkWell(
-              onTap: addToCart,
+              bottom: 0,
+              height: 80,
+              width: size.width,
               child: Container(
-                color: MyColor.firstColor,
-                child: Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Icon(
-                        Icons.shopping_cart,
-                        color: Colors.white,
+                padding: EdgeInsets.all(16),
+                child: Consumer<CartBloc>(builder: (context, cartBloc, child) {
+                  var cart = cartBloc.cart;
+                  if (cart.length > 0) {
+                    return InkWell(
+                      onTap: addToCart,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: MyColor.firstColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(
+                                Icons.shopping_cart,
+                                color: Colors.white,
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                "Add to Cart",
+                                style: MyText.bottomBarTitle,
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                      SizedBox(
-                        width: 5,
+                    );
+                  }
+                  else {
+                    return InkWell(
+                      onTap: backToHome,
+                      child: Container(
+                        decoration: BoxDecoration(
+
+                          border: Border.all(width: 1,color: MyColor.firstColor,),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(
+                                FontAwesomeIcons.home,
+                                color: MyColor.firstColor,
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                " Back to Home",
+                                style: MyText.cardTitle,
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                      Text(
-                        "Add to Cart",
-                        style: MyText.bottomBarTitle,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          )
+                    );
+                  }
+                }),
+              ))
         ],
       ),
     );

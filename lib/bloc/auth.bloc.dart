@@ -3,30 +3,30 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:prm_flutter/model/token.dart';
+import 'package:prm_flutter/model/user.dart';
 import 'package:prm_flutter/service/appEnv.dart';
 import 'package:prm_flutter/service/authService.dart';
+import 'package:prm_flutter/service/share.ref.service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthBloc  with ChangeNotifier {
+  ShareRefService shareRefService = ShareRefService.getInstance();
   static const String START = "start";
   static const String ERROR = "error";
   static const String OK = "ok";
-  Token _token;
-  Token get token => _token;
 
-  SharedPreferences prefs;
+
+  String _token;
+  String get token => _token;
+
   var _statusController = StreamController.broadcast();
   Stream get statusStream => _statusController.stream;
   Future<String>  isLogin() async{
     try{
-      prefs = await SharedPreferences.getInstance();
-      var tokenString = prefs.get(AppEnv.TOKEN);
-      if(tokenString != null) {
-        print("get data ok ");
+      if(token == null) _token = await shareRefService.getToken();
+      if(_token != null) {
         return AuthBloc.OK;
-        _token = json.decode(tokenString);
       }
-      print("data empty");
       return AuthBloc.START;
     }catch(e){
       print(e);
@@ -34,16 +34,11 @@ class AuthBloc  with ChangeNotifier {
     }
   }
   void fetchToken(String username,String password, listenData) async {
-    prefs = await SharedPreferences.getInstance();
     listenData(AuthBloc.START);
     AuthService.fetchToken(username,password).then((rs) async =>
     {
-        _token = rs,
-        prefs.setString(AppEnv.TOKEN, token.toString()).then((res)=>
-        {
-          if(res)print("--- save data ok")
-        } )
-        ,
+        _token = rs.access_token,
+        shareRefService.setToken(rs),
         listenData(AuthBloc.OK)
     }
     ).catchError((e){

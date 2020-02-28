@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:prm_flutter/bloc/cartBloc.dart';
+import 'package:prm_flutter/bloc/cart.bloc.dart';
 import 'package:prm_flutter/model/product.dart';
 import 'package:prm_flutter/service/apiEnv.dart';
 import 'package:prm_flutter/style/colors.dart';

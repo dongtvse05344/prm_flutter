@@ -1,5 +1,6 @@
 import 'package:bubble_bottom_bar/bubble_bottom_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:prm_flutter/bloc/auth.bloc.dart';
 import 'package:prm_flutter/bloc/categoryBloc.dart';
 import 'package:prm_flutter/screen/home/fragment/account.dart';
 import 'package:prm_flutter/screen/home/fragment/activity.dart';
@@ -17,26 +18,15 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  AuthBloc _authBloc;
   CategoryBloc _categoryBloc = CategoryBloc.getInstance();
   PageController _pageController = new PageController();
-  SharedPreferences prefs;
   int bottom_nav_index = 0;
   String _appLabel = "Home";
 
 
   @override
   void initState() {
-  }
-
-  initToken() async {
-    SharedPreferences.setMockInitialValues({});
-    prefs = await SharedPreferences.getInstance();
-    String token = prefs.get(AppEnv.TOKEN);
-    if(token !=null) {
-      setState(() {
-        _appLabel = token;
-      });
-    }
   }
 
   void changBottomIndex(int index) {
@@ -48,6 +38,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
   @override
   Widget build(BuildContext context) {
+    _authBloc = Provider.of<AuthBloc>(context);
+    _authBloc.isLogin();
     return Scaffold(
 //      body: AnimatedSwitcher(
 //          duration: Duration(milliseconds: 500),

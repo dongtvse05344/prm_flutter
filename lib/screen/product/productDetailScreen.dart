@@ -1,5 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:prm_flutter/bloc/cartBloc.dart';
+import 'package:prm_flutter/bloc/cart.bloc.dart';
 import 'package:prm_flutter/bloc/product.detail.bloc.dart';
 import 'package:prm_flutter/bloc/productBloc.dart';
 import 'package:prm_flutter/model/product.dart';
@@ -88,186 +89,189 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       body: SafeArea(
         child: Stack(
           children: <Widget>[
-            SingleChildScrollView(
-              controller: scrollController,
-              child: StreamBuilder(
-                  stream: _bloc.productStream,
-                  initialData: _bloc.product,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      Product _product = snapshot.data;
-                      return Column(
-                        children: <Widget>[
-                          Stack(
-                            children: <Widget>[
-                              Container(
-                                height: 200,
-                                width: double.infinity,
-                                child: AnimatedSwitcher(
-                                  duration: Duration(milliseconds: 300),
-                                  child:
-                                  _seletedImage ==null ?
-                                  Image.network(
-                                    "${Env.imageEndPoint}${_product.bannerPath}",
-                                    fit: BoxFit.cover,
-                                  ) :
-                                  Image.network(
-                                    "${Env.imageEndPoint}${_seletedImage}",
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                bottom: 0,
-                                right: 20,
-                                child: Container(
-                                  height: 40,
-                                  width: 40,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(50),
-                                  ),
-                                  child: Icon(
-                                    Icons.error,
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 20),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+            Container(
+              constraints: BoxConstraints.expand(),
+              child: SingleChildScrollView(
+                controller: scrollController,
+                child: StreamBuilder(
+                    stream: _bloc.productStream,
+                    initialData: _bloc.product,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        Product _product = snapshot.data;
+                        return Column(
+                          children: <Widget>[
+                            Stack(
                               children: <Widget>[
-                                Row(
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.gavel,
-                                      color: Colors.lightGreen,
-                                    ),
-                                    Text(
-                                      " Shop loved",
-                                      style:
-                                          TextStyle(color: Colors.lightGreen),
-                                    )
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Text(
-                                  "${_product.name}",
-                                  style: MyText.pageTitle,
-                                ),
-                                Text(
-                                  "${_product.description}",
-                                  style: TextStyle(color: Colors.grey),
-                                ),
-                                Row(
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.favorite,
-                                      color: Colors.yellow,
-                                    ),
-                                    Text("${_product.star}"),
-                                    SizedBox(
-                                      width: 20,
-                                    ),
-                                    Icon(
-                                      Icons.timelapse,
-                                      color: Colors.grey,
-                                    ),
-                                    Text("\$ ${_product.currentPrice}"),
-                                  ],
-                                ),
-                                Divider(),
-                                Row(
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.loyalty,
-                                      color: Colors.grey,
-                                    ),
-                                    Text(" Special discount for combo"),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    Text(
-                                      "Images",
-                                      style: MyText.cardTitle,
-                                    ),
-                                  ],
-                                ),
                                 Container(
-                                  height: 100,
-                                  child: StreamBuilder(
-                                      initialData: _bloc.images,
-                                      stream: _bloc.imagesStream,
-                                      builder: (context, snapshot) {
-                                        if (snapshot.hasData) {
-                                          List<String> data = snapshot.data;
-                                          return ListView.builder(
-                                            scrollDirection: Axis.horizontal,
-                                            itemCount: data.length,
-                                            itemBuilder: (context, index) {
-                                              return InkWell(
-                                                onTap: () => changeSeletedImage(
-                                                    data[index]),
-                                                child: Container(
-                                                  width: 50,
-                                                  height: 50,
-                                                  margin: EdgeInsets.only(
-                                                      right: 30),
-                                                  child: Image.network(
-                                                      "${Env.imageEndPoint}${data[index]}"),
-                                                ),
-                                              );
-                                            },
-                                          );
-                                        } else {
-                                          return Text("Loading ...");
-                                        }
-                                      }),
-                                ),
-                                Container(
-                                  height: 20,
+                                  height: 200,
                                   width: double.infinity,
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    Text(
-                                      "My services",
-                                      style: MyText.cardTitle,
+                                  child: AnimatedSwitcher(
+                                    duration: Duration(milliseconds: 300),
+                                    child:
+                                    _seletedImage ==null ?
+                                    Image.network(
+                                      "${Env.imageEndPoint}${_product.bannerPath}",
+                                      fit: BoxFit.cover,
+                                    ) :
+                                    Image.network(
+                                      "${Env.imageEndPoint}${_seletedImage}",
+                                      fit: BoxFit.cover,
                                     ),
-                                  ],
-                                ),
-                                Container(
-                                  child: ListView(
-                                    scrollDirection: Axis.vertical,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    children: <Widget>[],
                                   ),
                                 ),
+                                Positioned(
+                                  bottom: 0,
+                                  right: 20,
+                                  child: Container(
+                                    height: 40,
+                                    width: 40,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(50),
+                                    ),
+                                    child: Icon(
+                                      Icons.error,
+                                    ),
+                                  ),
+                                )
                               ],
                             ),
-                          )
-                        ],
-                      );
-                    } else {
-                      return Container(
-                        child: Text("Loading ..."),
-                      );
-                    }
-                  }),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 20),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Row(
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.gavel,
+                                        color: Colors.lightGreen,
+                                      ),
+                                      Text(
+                                        " Shop loved",
+                                        style:
+                                            TextStyle(color: Colors.lightGreen),
+                                      )
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    "${_product.name}",
+                                    style: MyText.pageTitle,
+                                  ),
+                                  Text(
+                                    "${_product.description}",
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
+                                  Row(
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.favorite,
+                                        color: Colors.yellow,
+                                      ),
+                                      Text("${_product.star}"),
+                                      SizedBox(
+                                        width: 20,
+                                      ),
+                                      Icon(
+                                        Icons.timelapse,
+                                        color: Colors.grey,
+                                      ),
+                                      Text("\$ ${_product.currentPrice}"),
+                                    ],
+                                  ),
+                                  Divider(),
+                                  Row(
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.loyalty,
+                                        color: Colors.grey,
+                                      ),
+                                      Text(" Special discount for combo"),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Text(
+                                        "Images",
+                                        style: MyText.cardTitle,
+                                      ),
+                                    ],
+                                  ),
+                                  Container(
+                                    height: 100,
+                                    child: StreamBuilder(
+                                        initialData: _bloc.images,
+                                        stream: _bloc.imagesStream,
+                                        builder: (context, snapshot) {
+                                          if (snapshot.hasData) {
+                                            List<String> data = snapshot.data;
+                                            return ListView.builder(
+                                              scrollDirection: Axis.horizontal,
+                                              itemCount: data.length,
+                                              itemBuilder: (context, index) {
+                                                return InkWell(
+                                                  onTap: () => changeSeletedImage(
+                                                      data[index]),
+                                                  child: Container(
+                                                    width: 50,
+                                                    height: 50,
+                                                    margin: EdgeInsets.only(
+                                                        right: 30),
+                                                    child: Image.network(
+                                                        "${Env.imageEndPoint}${data[index]}"),
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          } else {
+                                            return Text("Loading ...");
+                                          }
+                                        }),
+                                  ),
+                                  Container(
+                                    height: 20,
+                                    width: double.infinity,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Text(
+                                        "My services",
+                                        style: MyText.cardTitle,
+                                      ),
+                                    ],
+                                  ),
+                                  Container(
+                                    child: ListView(
+                                      scrollDirection: Axis.vertical,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      children: <Widget>[],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        );
+                      } else {
+                        return Container(
+                          child: Text("Loading ..."),
+                        );
+                      }
+                    }),
+              ),
             ),
             Positioned(
               height: 50,

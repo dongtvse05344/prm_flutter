@@ -20,10 +20,7 @@ class Token {
     );
   }
 
-  @override
-  String toString() {
-    return '{role: $role, fullname: $fullname, access_token: $access_token, expires_in: $expires_in}';
-  }
+
 
 
 }
