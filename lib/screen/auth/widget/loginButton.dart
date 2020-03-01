@@ -3,6 +3,10 @@ import 'package:prm_flutter/screen/home/homeScreen.dart';
 import 'package:prm_flutter/style/colors.dart';
 
 class LoginButton extends StatefulWidget {
+  final String title;
+
+  LoginButton(this.title);
+
   @override
   _LoginButtonState createState() => _LoginButtonState();
 }
@@ -18,7 +22,7 @@ class _LoginButtonState extends State<LoginButton> {
         color: MyColor.firstColor,
         borderRadius: BorderRadius.circular(20)
       ),
-      child: Center(child: Text("Sign In",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 18),),),
+      child: Center(child: Text("${widget.title}",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 18),),),
     );
   }
 }

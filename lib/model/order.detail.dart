@@ -3,9 +3,10 @@ class OrderDetail {
   String size;
   String color;
   int quantity;
+  String image;
 
   OrderDetail({this.id, this.productId, this.orderId, this.size, this.color,
-    this.quantity});
+    this.quantity,this.image});
 
   factory OrderDetail.fromJson(Map<String, dynamic> json) {
     return OrderDetail(
@@ -13,7 +14,8 @@ class OrderDetail {
       size: json["Size"],
       color: json["Color"],
       quantity: json["Quantity"],
-      productId: json["ProductId"]
+      productId: json["ProductId"],
+      image: json["Image"],
     );
   }
 }

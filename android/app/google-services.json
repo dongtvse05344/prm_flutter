@@ -1,0 +1,77 @@
+{
+  "project_info": {
+    "project_number": "869771014887",
+    "firebase_url": "https://bridge-639a3.firebaseio.com",
+    "project_id": "bridge-639a3",
+    "storage_bucket": "bridge-639a3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:869771014887:android:3b793b082a827c93342842",
+        "android_client_info": {
+          "package_name": "com.example.bridge"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "869771014887-0i7tv81i1q8i79n137n6uc1t3c1mert4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.bridge",
+            "certificate_hash": "ab332ce99fafe3ef221798af763c76e7f57e69b9"
+          }
+        },
+        {
+          "client_id": "869771014887-94e0aeb0lf8fl8e12i6ne38eo4vn9jt3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDF8mJH9uPODzENc1LSXBQSPNaQq8JpSR4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "869771014887-94e0aeb0lf8fl8e12i6ne38eo4vn9jt3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:869771014887:android:a92dfd57bbffa2fe342842",
+        "android_client_info": {
+          "package_name": "com.shuu.prm_flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "869771014887-94e0aeb0lf8fl8e12i6ne38eo4vn9jt3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDF8mJH9uPODzENc1LSXBQSPNaQq8JpSR4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "869771014887-94e0aeb0lf8fl8e12i6ne38eo4vn9jt3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

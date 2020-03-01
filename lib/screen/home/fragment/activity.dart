@@ -4,6 +4,7 @@ import 'package:prm_flutter/bloc/auth.bloc.dart';
 import 'package:prm_flutter/bloc/order.bloc.dart';
 import 'package:prm_flutter/model/order.dart';
 import 'package:prm_flutter/screen/home/widget/activityBox.dart';
+import 'package:prm_flutter/screen/home/widget/order.card.dart';
 import 'package:prm_flutter/screen/order/order.detail.dart';
 import 'package:prm_flutter/style/colors.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -17,12 +18,7 @@ class _ActivityFragmentState extends State<ActivityFragment> {
   var now = new DateTime.now();
   AuthBloc _aBloc;
   OrderBloc _orderBloc;
-  clickToOrderDetail(int id) {
-    _orderBloc.getOrder(id, _aBloc.token);
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => OrderDetailScreen()
-    ));
-  }
+
   @override
   Widget build(BuildContext context) {
     String formattedDate = DateFormat('dd MMM yyyy').format(now);
@@ -59,44 +55,7 @@ class _ActivityFragmentState extends State<ActivityFragment> {
                     scrollDirection: Axis.vertical,
                     itemCount:  orders.length,
                     itemBuilder: (context,i){
-                      return InkWell(
-                        onTap: ()=>clickToOrderDetail(orders[i].id),
-                        child: Container(
-                          child: Column(
-                            children: <Widget>[
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Text("Date: "),
-                                  Text("${orders[i].formatDate}"),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Text("Address: "),
-                                  Text(orders[i].address),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Text("Code: "),
-                                  Text("${orders[i].id}"),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Text("Money: "),
-                                  Text("${orders[i].totalAmount}"),
-                                ],
-                              ),
-                              Divider(),
-                            ],
-                          ),
-                        ),
-                      );
+                      return OrderCard(orders[i]);
                     },
                   );
                 } else {

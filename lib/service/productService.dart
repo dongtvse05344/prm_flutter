@@ -30,6 +30,24 @@ class ProductService {
     }
   }
 
+  static Future<List<Product>> searchProducts(String name) async {
+    final response = await http
+        .get("${Env.endPoint}$productPath?name=$name",
+      headers: {
+        "Accept": "application/json",
+        "content-type": "application/json"
+      } ,
+    );
+    if(response.statusCode ==200) {
+      Iterable res  = json.decode(response.body);
+      List<Product> products = res.map((json) => Product.fromJson(json)).toList();
+      return products;
+    }
+    else {
+      throw Exception('Failed to search Products from Internet');
+    }
+  }
+
   static Future<List<String>> getImages(int id) async {
     final response = await http
         .get("${Env.endPoint}$productPath$id$ImagesPath",

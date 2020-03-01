@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:prm_flutter/bloc/auth.bloc.dart';
+import 'package:prm_flutter/screen/auth/signupScreen.dart';
 import 'package:prm_flutter/screen/auth/widget/loginButton.dart';
 import 'package:prm_flutter/screen/auth/widget/socialButton.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:prm_flutter/screen/home/homeScreen.dart';
-import 'package:prm_flutter/service/appEnv.dart';
-import 'package:prm_flutter/service/authService.dart';
 import 'package:prm_flutter/widget/LoadingDialog.dart';
 import 'package:prm_flutter/widget/MessageDialog.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -17,6 +16,43 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn googleSignIn = GoogleSignIn();
+  Future<FirebaseUser> signInWithGoogle() async {
+    final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
+    final GoogleSignInAuthentication googleSignInAuthentication =
+    await googleSignInAccount.authentication;
+
+    final AuthCredential credential = GoogleAuthProvider.getCredential(
+      accessToken: googleSignInAuthentication.accessToken,
+      idToken: googleSignInAuthentication.idToken,
+    );
+
+    final AuthResult authResult = await _auth.signInWithCredential(credential);
+    final FirebaseUser user = authResult.user;
+
+    assert(!user.isAnonymous);
+    assert(await user.getIdToken() != null);
+
+    final FirebaseUser currentUser = await _auth.currentUser();
+    assert(user.uid == currentUser.uid);
+    return user;
+  }
+
+  void signOutGoogle() async{
+    await googleSignIn.signOut();
+
+    print("User Sign Out");
+  }
+  void ggSignIn() {
+    signInWithGoogle().then((rs)=>{
+      googleSignIn.signOut(),
+      _authBloc.googleSignin(rs.email, rs.uid, rs.email,rs.displayName,rs.phoneNumber, tokenListener)
+    }).catchError((e)=>{
+        MessageDialog.showMessageDialog(context, "Error", "Unable to connect to server"),
+    });
+  }
+
   AuthBloc _authBloc;
   final FocusNode _usernamefocusNode = FocusNode();
   final FocusNode _passwordfocusNode = FocusNode();
@@ -30,6 +66,12 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       isExtend = !isExtend;
     });
+  }
+
+  gotoSignup() {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => SignUpScreen(),
+    ));
   }
 
   _onLoginButtonClick() async {
@@ -64,143 +106,146 @@ class _LoginScreenState extends State<LoginScreen> {
     final size = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: SafeArea(
-        child: Stack(
-          children: <Widget>[
-            Positioned(
-              child: Container(
-                width: size.width,
-                height: size.height,
-                child: Image.asset(
-                  "assets/login_bg.png",
-                  fit: BoxFit.cover,
-                ),
+      body: Stack(
+        children: <Widget>[
+          Positioned(
+            child: Container(
+              width: size.width,
+              height: size.height,
+              child: Image.asset(
+                "assets/login_bg.png",
+                fit: BoxFit.cover,
               ),
             ),
-            SingleChildScrollView(
-              controller: _scrollController,
+          ),
+          SingleChildScrollView(
+            controller: _scrollController,
+              child: Column(
+            children: <Widget>[
+              AnimatedContainer(
+                duration: Duration(milliseconds: 200),
+                height: isExtend? size.height * 0.4:size.height * 0.1 ,
+              ),
+              Container(
+                height: size.height * 0.2,
+                padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
-              children: <Widget>[
-                AnimatedContainer(
-                  duration: Duration(milliseconds: 200),
-                  height: isExtend? size.height * 0.4:size.height * 0.1 ,
-                ),
-                Container(
-                  height: size.height * 0.2,
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        "Welcome",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 42,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 15),
-                        width: double.infinity,
-                        child: Text(
-                          _appLabel
-                          ,
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Container(
-                  height: size.height * 0.2,
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  decoration: BoxDecoration(
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      TextFormField(
-                        controller: _usernameController,
-                        focusNode: _usernamefocusNode,
-                        cursorColor: Color(0xffcccccc),
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      "Welcome",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 42,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: 15),
+                      width: double.infinity,
+                      child: Text(
+                        _appLabel
+                        ,
                         style: TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
-                          labelText: 'Username',
-                          labelStyle: TextStyle(color: Color(0xffcccccc)),
-                          focusColor: Colors.white,
-                          fillColor: Colors.white,
-                          enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Color(0xffcccccc))),
-                          focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white)),
-                        ),
                       ),
-                      Stack(
-                        children: <Widget>[
-                          TextFormField(
-                            controller: _passwordController,
-                            focusNode: _passwordfocusNode,
-                            obscureText: true,
-                            cursorColor: Color(0xffcccccc),
-                            style: TextStyle(color: Colors.white),
-                            decoration: InputDecoration(
-                              labelText: 'Password',
+                    )
+                  ],
+                ),
+              ),
+              Container(
+                height: size.height * 0.2,
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                ),
+                child: Column(
+                  children: <Widget>[
+                    TextFormField(
+                      controller: _usernameController,
+                      focusNode: _usernamefocusNode,
+                      cursorColor: Color(0xffcccccc),
+                      style: TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        labelText: 'Username',
+                        labelStyle: TextStyle(color: Color(0xffcccccc)),
+                        focusColor: Colors.white,
+                        fillColor: Colors.white,
+                        enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Color(0xffcccccc))),
+                        focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white)),
+                      ),
+                    ),
+                    Stack(
+                      children: <Widget>[
+                        TextFormField(
+                          controller: _passwordController,
+                          focusNode: _passwordfocusNode,
+                          obscureText: true,
+                          cursorColor: Color(0xffcccccc),
+                          style: TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            labelText: 'Password',
 
-                              labelStyle: TextStyle(color: Color(0xffcccccc)),
-                              focusColor: Colors.white,
-                              fillColor: Colors.white,
-                              enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Color(0xffcccccc))),
-                              focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white)),
-                            ),
+                            labelStyle: TextStyle(color: Color(0xffcccccc)),
+                            focusColor: Colors.white,
+                            fillColor: Colors.white,
+                            enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Color(0xffcccccc))),
+                            focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.white)),
                           ),
-                          Positioned(
-                            right: 0,
-                            bottom: 20,
-                            child: Text(
-                              "Forgot Password ?",
-                              style: TextStyle(color: Color(0xffcccccc)),
-                            ),
-                          )
-                        ],
-                      ),
+                        ),
+                        Positioned(
+                          right: 0,
+                          bottom: 20,
+                          child: Text(
+                            "Forgot Password ?",
+                            style: TextStyle(color: Color(0xffcccccc)),
+                          ),
+                        )
+                      ],
+                    ),
 
-                    ],
-                  ),
+                  ],
                 ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      InkWell(
-                          onTap: _onLoginButtonClick,
-                          child: LoginButton()
-                      ),
-                      Row(
-                        children: <Widget>[
-                          SocialButton(FontAwesomeIcons.facebookF),
-                          SizedBox(width: 10,),
-                          SocialButton(FontAwesomeIcons.google),
-                        ],
-                      )
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    InkWell(
+                        onTap: _onLoginButtonClick,
+                        child: LoginButton("Sign In")
+                    ),
+                    Row(
+                      children: <Widget>[
+                        SocialButton(FontAwesomeIcons.facebookF),
+                        SizedBox(width: 10,),
+                        InkWell(
+                            onTap: ggSignIn,
+                            child: SocialButton(FontAwesomeIcons.google)),
+                      ],
+                    )
 
-                    ],
-                  ),
+                  ],
                 ),
-                Container(
-                  padding: EdgeInsets.only(top: 10),
-                  child: Column(
+              ),
+              Container(
+                padding: EdgeInsets.only(top: 10),
+                child: Column(
 
-                    children: <Widget>[
-                      Text("Or",style: TextStyle(color: Colors.white)),
-                      Text("Sign Up",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 18),),
-                    ],
-                  ),
-                )
-              ],
-            )),
-          ],
-        ),
+                  children: <Widget>[
+                    Text("Or",style: TextStyle(color: Colors.white)),
+                    InkWell(
+                        onTap: gotoSignup,
+                        child: Text("Sign Up",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 18),)
+                    ),
+                  ],
+                ),
+              )
+            ],
+          )),
+        ],
       ),
     );
   }

@@ -47,8 +47,40 @@ class AuthBloc  with ChangeNotifier {
     });
   }
 
+  void googleSignin(String username, String uid,String email,String fullname,String phonenumber, listenData) async {
+    listenData(AuthBloc.START);
+    AuthService.googleSignIn(username, uid, email, fullname, phonenumber).then((rs) async =>
+    {
+      _token = rs.access_token,
+      shareRefService.setToken(rs),
+      listenData(AuthBloc.OK)
+    }
+    ).catchError((e){
+      print(e);
+      listenData(AuthBloc.ERROR);
+    });
+  }
+
+  void register(String username,String password, String email,String phoneNumber,String fullname, listenData) async {
+    listenData(AuthBloc.START);
+    AuthService.register(email,username,fullname,phoneNumber, password).then((rs) async =>
+    {
+      listenData(AuthBloc.OK)
+    }
+    ).catchError((e){
+      print(e);
+      listenData(AuthBloc.ERROR);
+    });
+  }
+
   void dispose() {
     _statusController.close();
     super.dispose();
+  }
+
+  Future<bool> logOut(){
+    _token = null;
+    notifyListeners();
+    return shareRefService.clear();
   }
 }

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:prm_flutter/bloc/auth.bloc.dart';
+import 'package:prm_flutter/bloc/order.bloc.dart';
 import 'package:prm_flutter/bloc/user.bloc.dart';
 import 'package:prm_flutter/screen/auth/loginScreen.dart';
 import 'package:prm_flutter/screen/home/widget/menuItem.dart';
+import 'package:prm_flutter/screen/order/order.dart';
 import 'package:prm_flutter/style/colors.dart';
 import 'package:prm_flutter/style/texts.dart';
 import 'package:provider/provider.dart';
@@ -14,17 +16,41 @@ class AccountFragment extends StatefulWidget {
 }
 
 class _AccountFragmentState extends State<AccountFragment> {
-
+  AuthBloc _aBloc;
+  OrderBloc _orderBloc;
   gotoLogin() {
     Navigator.push(context, MaterialPageRoute(
         builder: (context) => LoginScreen()
     ));
   }
+  gotoCurrentOrder() {
+    if(_aBloc.token !=null) {
+      _orderBloc.getOrdersDone(_aBloc.token);
+    }
+    Navigator.push(context, MaterialPageRoute(
+        builder: (context) => OrderScreen(0)
+    ));
+  }
+
+  gotoPassOrder() {
+    if(_aBloc.token !=null) {
+      _orderBloc.getOrdersDone(_aBloc.token);
+    }
+    Navigator.push(context, MaterialPageRoute(
+        builder: (context) => OrderScreen(1)
+    ));
+  }
+
+  logOut() {
+    _aBloc.logOut();
+  }
+
 
   @override
   Widget build(BuildContext context) {
     UserBloc _uBloc = Provider.of<UserBloc>(context);
-    AuthBloc _aBloc = Provider.of<AuthBloc>(context);
+    _aBloc = Provider.of<AuthBloc>(context);
+    _orderBloc = Provider.of<OrderBloc>(context);
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -33,8 +59,8 @@ class _AccountFragmentState extends State<AccountFragment> {
             child: FutureBuilder(
               future: _aBloc.isLogin(),
               builder: (context, snapshot){
-                if(snapshot.hasData){
-                  if(snapshot.data == AuthBloc.OK) {
+                if(snapshot.hasData ){
+                  if(snapshot.data == AuthBloc.OK && _aBloc.token != null) {
                     _uBloc.getUserData(_aBloc.token);
                     return Consumer<UserBloc>(
                       builder: (context, userBloc, child){
@@ -72,14 +98,24 @@ class _AccountFragmentState extends State<AccountFragment> {
                             ),
                             SizedBox(height: 10,),
                             Divider(),
-                            MenuItem(),
+                            InkWell(
+                                onTap: gotoCurrentOrder,
+                                child: MenuItem("Current Order")
+                            ),
                             Divider(),
-                            MenuItem(),
+                            InkWell(
+                                onTap: gotoPassOrder,
+                                child: MenuItem("Order done / cancel")
+                            ),
                             Divider(),
-                            MenuItem(),
+                            MenuItem("Account setting"),
                             Divider(),
-                            MenuItem(),
+                            MenuItem("App setting"),
                             Divider(),
+                            InkWell(
+                                onTap: logOut,
+                                child: MenuItem("Log Out")
+                            ),
                           ],
                         );
                       },

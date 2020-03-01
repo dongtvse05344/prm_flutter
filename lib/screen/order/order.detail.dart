@@ -1,21 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:prm_flutter/bloc/auth.bloc.dart';
 import 'package:prm_flutter/bloc/order.bloc.dart';
 import 'package:prm_flutter/model/order.dart';
+import 'package:prm_flutter/screen/order/widget/timeLine.dart';
+import 'package:prm_flutter/service/apiEnv.dart';
 import 'package:prm_flutter/style/colors.dart';
 import 'package:prm_flutter/style/texts.dart';
 import 'package:provider/provider.dart';
 
+import 'cancel.done.dart';
+
 class OrderDetailScreen extends StatefulWidget {
+  final bool canCancel;
+
+  OrderDetailScreen(this.canCancel);
+
   @override
   _OrderDetailScreenState createState() => _OrderDetailScreenState();
 }
 
 class _OrderDetailScreenState extends State<OrderDetailScreen> {
-  unOrder() {
+  OrderBloc _orderBloc;
+  AuthBloc _authBloc;
+  cancelOrder() async {
+    if(_authBloc.token != null) {
+      var result = await _orderBloc.cancelOrder(_orderBloc.order.id, _authBloc.token);
+      if(result) {
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => CancelDoneScreen(),
+        ));
+      }
+    }
 
   }
   @override
   Widget build(BuildContext context) {
+    _orderBloc = Provider.of<OrderBloc>(context);
+    _authBloc  = Provider.of<AuthBloc>(context);
     var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
@@ -38,98 +60,122 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                 child: Consumer<OrderBloc>(
                   builder: (context, oBloc,child){
                     Order order = oBloc.order;
-                    return Column(
-                      children: <Widget>[
-                        Container(
-                          child: Column(
-                            children: <Widget>[
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Text("Date: "),
-                                  Text("${order.formatDate}"),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Text("Address: "),
-                                  Text(order.address),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Text("Code: "),
-                                  Text("${order.id}"),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Text("Money: "),
-                                  Text("${order.totalAmount}\$"),
-                                ],
-                              ),
-                              Divider(),
-                            ],
+                    if(order != null) {
+                      return Column(
+                        children: <Widget>[
+                          Container(
+                            child: Column(
+                              children: <Widget>[
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Text("Date: "),
+                                    Text("${order.formatDate}"),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Text("Address: "),
+                                    Text(order.address),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Text("Code: "),
+                                    Text("${order.id}"),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Text("Money: "),
+                                    Text("${order.totalAmount}\$"),
+                                  ],
+                                ),
+                                Divider(),
+                              ],
+                            ),
                           ),
-                        ),
-                        Container(
-                          child: ListView.builder(
-                          physics: NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            scrollDirection: Axis.vertical,
-                            itemCount:  order.orderDetails.length,
-                            itemBuilder: (context,i){
-                              return Column(
-                                children: <Widget>[
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          Container(
+                              child: ListView.builder(
+                                physics: NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                scrollDirection: Axis.vertical,
+                                itemCount:  order.orderDetails.length,
+                                itemBuilder: (context,i){
+                                  return Row(
                                     children: <Widget>[
-                                      Text("Color: "),
-                                      Text("${order.orderDetails[i].color}",)
+                                      Expanded(
+                                        flex: 1,
+                                        child: Image.network("${Env.imageEndPoint}${order.orderDetails[i].image}"),
+                                      ),
+                                      Expanded(
+                                        flex: 6,
+                                        child: Column(
+                                          children: <Widget>[
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: <Widget>[
+                                                Text("Color: "),
+                                                Text("${order.orderDetails[i].color}",)
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: <Widget>[
+                                                Text("Size: "),
+                                                Text("${order.orderDetails[i].size}",)
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: <Widget>[
+                                                Text("Quantity: "),
+                                                Text("${order.orderDetails[i].quantity}",)
+                                              ],
+                                            ),
+                                            Divider(),
+                                          ],
+                                        ),
+                                      ),
                                     ],
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Text("Size: "),
-                                      Text("${order.orderDetails[i].size}",)
-                                    ],
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Text("Quantity: "),
-                                      Text("${order.orderDetails[i].quantity}",)
-                                    ],
-                                  ),
-                                ],
-                              );
-                            },
+                                  );
+                                },
+                              )
+                          ),
+                          Divider(),
+                          Container(
+                              child: ListView.builder(
+                                physics: NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                scrollDirection: Axis.vertical,
+                                itemCount:  order.orderStatues.length,
+                                itemBuilder: (context,i){
+                                  if(i < order.orderStatues.length-1){
+                                    return TimelineRow("${order.orderStatues[i].name}",
+                                        "${DateFormat("dd-MM-yyyy").format(order.orderStatues[i].dateCreated)}");
+                                  } else {
+                                    return TimelineLastRow("${order.orderStatues[i].name}",
+                                        "${DateFormat("dd-MM-yyyy").format(order.orderStatues[i].dateCreated)}");
+                                  }
+
+                                },
+                              )
                           )
-                        ),
-                        Divider(),
-                        Container(
-                            child: ListView.builder(
-                              physics: NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              scrollDirection: Axis.vertical,
-                              itemCount:  order.orderStatues.length,
-                              itemBuilder: (context,i){
-                                return Text("${order.orderStatues[i].name}");
-                              },
-                            )
-                        )
-                      ],
-                    );
+                        ],
+                      );
+                    }
+                    else {
+                      return Container();
+                    }
                   },
                 ),
               ),
             ),
           ),
-          Positioned(
+          widget.canCancel ? Positioned(
             bottom: 0,
             child: Container(
               width: size.width,
@@ -137,7 +183,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
               color: Colors.white,
               padding: EdgeInsets.all(16),
               child: InkWell(
-                onTap: unOrder,
+                onTap: cancelOrder,
                 child: Container(
                   width: size.width,
                   height: 60,
@@ -151,7 +197,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                 ),
               ),
             ),
-          )
+          ) : Container()
         ],
       ),
     );

@@ -10,6 +10,8 @@ import 'package:prm_flutter/service/apiEnv.dart';
 
 class OrderService {
   static final String orderPath = "api/Order/";
+  static final String cancelPath = "/Cancel";
+
   static Future<bool> createOrder(OrderCM data,String token) async {
 
     final response = await http
@@ -28,9 +30,9 @@ class OrderService {
       throw Exception('Failed to ORDER from Internet');
     }
   }
-  static Future<List<Order>> getOrders(String token) async {
+  static Future<List<Order>> getOrders(isDone, String token) async {
     final response = await http
-        .get("${Env.endPoint}$orderPath",
+        .get("${Env.endPoint}$orderPath?isDone=$isDone",
         headers: {
           "Accept": "application/json",
           "content-type": "application/json",
@@ -67,6 +69,23 @@ class OrderService {
       res.orderDetails = orderDetails;
       res.orderStatues = orderStatues;
       return res;
+    }
+    else {
+      throw Exception('Failed to load ORDER from Internet');
+    }
+  }
+
+  static Future<void> cancelOrder(int id, String token) async {
+    final response = await http
+        .put("${Env.endPoint}$orderPath$id$cancelPath",
+      headers: {
+        "Accept": "application/json",
+        "content-type": "application/json",
+        "Authorization": "bearer " + token
+      } ,
+    );
+    if(response.statusCode ==200) {
+
     }
     else {
       throw Exception('Failed to load ORDER from Internet');

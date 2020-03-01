@@ -8,6 +8,7 @@ import 'package:prm_flutter/screen/home/widget/carouselCard.dart';
 import 'package:prm_flutter/screen/home/widget/categoryCard.dart';
 import 'package:prm_flutter/screen/home/widget/productCard.dart';
 import 'package:prm_flutter/screen/home/widget/serviceCard.dart';
+import 'package:prm_flutter/screen/product/search.screen.dart';
 import 'package:prm_flutter/style/colors.dart';
 import 'package:prm_flutter/style/texts.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -37,6 +38,11 @@ class _HomeFragmentState extends State<HomeFragment>
       builder: (context) =>CartScreen(),
     ));
   }
+  gotoSearch() {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) =>SearchScreen(),
+    ));
+  }
   @override
   Widget build(BuildContext context) {
     _collectionBloc = Provider.of<CollectionBloc>(context,listen: false);
@@ -58,7 +64,7 @@ class _HomeFragmentState extends State<HomeFragment>
                       children: <Widget>[
                         IconButton(
                           icon: Icon(Icons.search,color: MyColor.firstColor),
-                          onPressed: goToCartScreen,
+                          onPressed: gotoSearch,
                         ),
                         IconButton(
                           icon: Icon(Icons.shopping_cart, color: MyColor.firstColor,),

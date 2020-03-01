@@ -9,9 +9,10 @@ class Order {
   double totalAmount;
   DateTime dateCreated;
   String formatDate;
+  int currentStatus;
   List<OrderDetail> orderDetails;
   List<OrderStatus> orderStatues;
-  Order({this.id, this.address, this.note,this.totalAmount,this.dateCreated,this.formatDate});
+  Order({this.id, this.address, this.note,this.totalAmount,this.dateCreated,this.formatDate,this.currentStatus});
 
   factory Order.fromJson(Map<String, dynamic> json) {
     var _dateCreated = DateTime.parse(json["DateCreated"]);
@@ -22,7 +23,8 @@ class Order {
       note: json["Note"],
       totalAmount: json["TotalAmount"],
       dateCreated: _dateCreated,
-      formatDate: formattedDate
+      formatDate: formattedDate,
+      currentStatus: json["CurrentStatus"]
     );
   }
 }

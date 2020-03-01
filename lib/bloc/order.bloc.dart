@@ -5,6 +5,8 @@ import 'package:prm_flutter/service/order.service.dart';
 class OrderBloc with ChangeNotifier {
   List<Order> _orders;
   List<Order> get orders => _orders;
+  List<Order> _ordersD;
+  List<Order> get ordersD => _ordersD;
   Order _order;
   Order get order => _order;
   Future<bool> createOrder(OrderCM data,String token) async {
@@ -16,20 +18,42 @@ class OrderBloc with ChangeNotifier {
     }
   }
 
-  void getOrders(String token) async {
-    OrderService.getOrders(token)
+  void getOrders(String token)  {
+    OrderService.getOrders(false,token)
         .then((rs)=> {
-          _orders = rs,
-          notifyListeners()
-        })
+      _orders = rs,
+      notifyListeners()
+    })
         .catchError((e)=>print(e));
   }
 
-  void getOrder(int id, String token) async {
+  void getOrdersDone(String token)  {
+    OrderService.getOrders(true,token)
+        .then((rs)=> {
+      _ordersD = rs,
+      notifyListeners()
+    })
+        .catchError((e)=>print(e));
+  }
+
+  void getOrder(int id, String token)  {
     OrderService.getOrder(id, token)
         .then((rs)=> {
       _order = rs,
       notifyListeners()
     }).catchError((e)=>print(e));
+  }
+
+  Future<bool> cancelOrder(int id, String token) async {
+    try{
+      await OrderService.cancelOrder(id, token);
+      getOrdersDone(token);
+      getOrders(token);
+      return true;
+    }catch(e){
+      print(e);
+      return false;
+    }
+
   }
 }

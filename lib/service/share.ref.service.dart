@@ -24,6 +24,11 @@ class ShareRefService {
     return _preferences.setString(AppEnv.TOKEN, token.access_token);
   }
 
+
+  Future<bool> clear() async{
+    return _preferences.clear();
+  }
+
   Future<String> getToken() async {
     if(_preferences ==null)
       {

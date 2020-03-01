@@ -129,7 +129,7 @@ class _CartScreenState extends State<CartScreen> {
                                 width: 5,
                               ),
                               Text(
-                                "Add to Cart",
+                                "Check out",
                                 style: MyText.bottomBarTitle,
                               ),
                             ],
