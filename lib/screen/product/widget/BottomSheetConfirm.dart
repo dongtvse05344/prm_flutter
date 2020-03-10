@@ -142,9 +142,21 @@ class _BottomSheetConfirmState extends State<BottomSheetConfirm> {
                                       height: 40,
                                       width: 40,
                                       decoration: BoxDecoration(
-                                        border: Border.all(width: 1,color: Colors.grey),
+                                          border: Border.all(width: 1,color: Colors.grey),
                                         borderRadius: BorderRadius.circular(5),
-                                        color: selectedSize == data[index] ? MyColor.firstColor : Colors.transparent
+                                        color: selectedSize == data[index] ? MyColor.firstColor : MyColor.white,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.grey,
+                                              offset: Offset(2,2),
+                                              blurRadius: 5,
+                                            ),
+                                            BoxShadow(
+                                              color: Colors.white,
+                                              offset: Offset(-5,-5),
+                                              blurRadius: 5,
+                                            )
+                                          ]
                                       ),
                                       margin: EdgeInsets.only(right: 5),
                                       padding: EdgeInsets.all(5),
@@ -219,7 +231,19 @@ class _BottomSheetConfirmState extends State<BottomSheetConfirm> {
                                                   data[index].b,
                                                   data[index].o*.5)
                                             ],
-                                          )
+                                          ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.grey,
+                                              offset: Offset(2,2),
+                                              blurRadius: 5,
+                                            ),
+                                            BoxShadow(
+                                              color: Colors.white,
+                                              offset: Offset(-5,-5),
+                                              blurRadius: 5,
+                                            )
+                                          ]
                                       ),
                                       margin: EdgeInsets.only(right: 5),
                                       padding: EdgeInsets.all(5),
@@ -257,7 +281,19 @@ class _BottomSheetConfirmState extends State<BottomSheetConfirm> {
                               decoration: BoxDecoration(
                                 border: Border.all(width: 1,color: Colors.grey),
                                 borderRadius: BorderRadius.circular(5),
-
+                                  color: MyColor.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey,
+                                      offset: Offset(2,2),
+                                      blurRadius: 5,
+                                    ),
+                                    BoxShadow(
+                                      color: Colors.white,
+                                      offset: Offset(-5,-5),
+                                      blurRadius: 5,
+                                    )
+                                  ]
                               ),
                               margin: EdgeInsets.only(right: 5),
                               padding: EdgeInsets.all(5),
@@ -270,7 +306,19 @@ class _BottomSheetConfirmState extends State<BottomSheetConfirm> {
                             decoration: BoxDecoration(
                               border: Border.all(width: 1,color: Colors.grey),
                               borderRadius: BorderRadius.circular(5),
-
+                                color: MyColor.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey,
+                                    offset: Offset(2,2),
+                                    blurRadius: 5,
+                                  ),
+                                  BoxShadow(
+                                    color: Colors.white,
+                                    offset: Offset(-5,-5),
+                                    blurRadius: 5,
+                                  )
+                                ]
                             ),
                             margin: EdgeInsets.only(right: 5),
                             padding: EdgeInsets.all(5),
@@ -284,7 +332,19 @@ class _BottomSheetConfirmState extends State<BottomSheetConfirm> {
                               decoration: BoxDecoration(
                                 border: Border.all(width: 1,color: Colors.grey),
                                 borderRadius: BorderRadius.circular(5),
-
+                                  color: MyColor.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey,
+                                      offset: Offset(2,2),
+                                      blurRadius: 5,
+                                    ),
+                                    BoxShadow(
+                                      color: Colors.white,
+                                      offset: Offset(-5,-5),
+                                      blurRadius: 5,
+                                    )
+                                  ]
                               ),
                               margin: EdgeInsets.only(right: 5),
                               padding: EdgeInsets.all(5),

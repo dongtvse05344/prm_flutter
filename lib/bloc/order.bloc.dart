@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:prm_flutter/model/order.dart';
 import 'package:prm_flutter/service/order.service.dart';
+import 'package:prm_flutter/service/productService.dart';
 
 class OrderBloc with ChangeNotifier {
   List<Order> _orders;
@@ -12,6 +13,15 @@ class OrderBloc with ChangeNotifier {
   Future<bool> createOrder(OrderCM data,String token) async {
     try{
       return OrderService.createOrder(data,token);
+    }catch(e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<bool> createRate(RatingCM data) async {
+    try{
+      return ProductService.createRating(data);
     }catch(e) {
       print(e);
       return false;

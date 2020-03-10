@@ -3,6 +3,9 @@ import 'package:intl/intl.dart';
 import 'package:prm_flutter/bloc/auth.bloc.dart';
 import 'package:prm_flutter/bloc/order.bloc.dart';
 import 'package:prm_flutter/model/order.dart';
+import 'package:prm_flutter/model/order.detail.dart';
+import 'package:prm_flutter/screen/order/widget/product.card.dart';
+import 'package:prm_flutter/screen/order/widget/rating.dialog.dart';
 import 'package:prm_flutter/screen/order/widget/timeLine.dart';
 import 'package:prm_flutter/service/apiEnv.dart';
 import 'package:prm_flutter/style/colors.dart';
@@ -34,11 +37,18 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     }
 
   }
+
+  void rating(OrderDetail orderDetail) {
+    showDialog(
+        context: context, builder: (BuildContext context) => RatingDialog(orderDetail));
+  }
   @override
   Widget build(BuildContext context) {
     _orderBloc = Provider.of<OrderBloc>(context);
     _authBloc  = Provider.of<AuthBloc>(context);
     var size = MediaQuery.of(context).size;
+
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -61,11 +71,46 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                   builder: (context, oBloc,child){
                     Order order = oBloc.order;
                     if(order != null) {
+                      Text status ;
+                      switch( order.currentStatus){
+                        case 0: status = Text("Received", style: TextStyle(color: Colors.green),); break;
+                        case 1: status = Text("Doing", style: TextStyle(color: Colors.yellow),); break;
+                        case 2: status = Text("Done", style: TextStyle(color: Colors.blueAccent),); break;
+                        case 3: status = Text("Cancel", style: TextStyle(color: Colors.redAccent),); break;
+                      }
                       return Column(
                         children: <Widget>[
                           Container(
                             child: Column(
                               children: <Widget>[
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Expanded(
+                                        flex: 1,
+                                        child: Text("Reciever: ")),
+                                    Expanded(
+                                      flex: 4,
+                                      child: Container(
+                                          child: Text(order.receiver,textAlign: TextAlign.right,)
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Expanded(
+                                        flex: 1,
+                                        child: Text("Phone Number: ")),
+                                    Expanded(
+                                      flex: 4,
+                                      child: Container(
+                                          child: Text(order.phoneNumber,textAlign: TextAlign.right,)
+                                      ),
+                                    ),
+                                  ],
+                                ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
@@ -76,8 +121,15 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
-                                    Text("Address: "),
-                                    Text(order.address),
+                                    Expanded(
+                                        flex: 1,
+                                        child: Text("Address: ")),
+                                    Expanded(
+                                      flex: 4,
+                                      child: Container(
+                                          child: Text(order.address,textAlign: TextAlign.right,)
+                                      ),
+                                    ),
                                   ],
                                 ),
                                 Row(
@@ -91,7 +143,14 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
                                     Text("Money: "),
-                                    Text("${order.totalAmount}\$"),
+                                    Text("${order.totalAmount}"),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Text("Status: "),
+                                    status,
                                   ],
                                 ),
                                 Divider(),
@@ -105,42 +164,9 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                 scrollDirection: Axis.vertical,
                                 itemCount:  order.orderDetails.length,
                                 itemBuilder: (context,i){
-                                  return Row(
-                                    children: <Widget>[
-                                      Expanded(
-                                        flex: 1,
-                                        child: Image.network("${Env.imageEndPoint}${order.orderDetails[i].image}"),
-                                      ),
-                                      Expanded(
-                                        flex: 6,
-                                        child: Column(
-                                          children: <Widget>[
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: <Widget>[
-                                                Text("Color: "),
-                                                Text("${order.orderDetails[i].color}",)
-                                              ],
-                                            ),
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: <Widget>[
-                                                Text("Size: "),
-                                                Text("${order.orderDetails[i].size}",)
-                                              ],
-                                            ),
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: <Widget>[
-                                                Text("Quantity: "),
-                                                Text("${order.orderDetails[i].quantity}",)
-                                              ],
-                                            ),
-                                            Divider(),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
+                                  return InkWell(
+                                      onTap: ()=> rating(order.orderDetails[i]),
+                                      child: ProductCard(order.orderDetails[i])
                                   );
                                 },
                               )

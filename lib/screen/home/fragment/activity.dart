@@ -5,6 +5,7 @@ import 'package:prm_flutter/bloc/order.bloc.dart';
 import 'package:prm_flutter/model/order.dart';
 import 'package:prm_flutter/screen/home/widget/activityBox.dart';
 import 'package:prm_flutter/screen/home/widget/order.card.dart';
+import 'package:prm_flutter/screen/order/order.dart';
 import 'package:prm_flutter/screen/order/order.detail.dart';
 import 'package:prm_flutter/style/colors.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -29,9 +30,21 @@ class _ActivityFragmentState extends State<ActivityFragment> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text("My Activity"),
-        leading: Icon(FontAwesomeIcons.gavel),
-        backgroundColor: MyColor.firstColor,
+        title: Text("My Activity",style: TextStyle(color: MyColor.firstColor,),),
+        backgroundColor: Colors.white,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(FontAwesomeIcons.history,color: MyColor.firstColor,),
+            onPressed: (){
+              if(_aBloc.token !=null) {
+                _orderBloc.getOrdersDone(_aBloc.token);
+              }
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => OrderScreen(1)
+              ));
+            },
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 10),

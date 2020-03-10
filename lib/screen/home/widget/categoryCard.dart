@@ -3,6 +3,7 @@ import 'package:prm_flutter/bloc/product.search.bloc.dart';
 import 'package:prm_flutter/model/category.dart';
 import 'package:prm_flutter/screen/product/product.search.screen.dart';
 import 'package:prm_flutter/service/apiEnv.dart';
+import 'package:prm_flutter/style/myStyle.dart';
 import 'package:provider/provider.dart';
 
 class CategoryCard extends StatefulWidget {
@@ -32,17 +33,7 @@ class _CategoryCardState extends State<CategoryCard> {
         padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
         width: 120,
         height: 140,
-        decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(5),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey,
-                offset: Offset(0,3),
-                blurRadius: 5,
-              ),
-            ],
-        ),
+        decoration: MyStyle.downBox,
         child: Column(
           children: <Widget>[
 //          Image.network(widget.icon, width: 100.0, height: 100.0),

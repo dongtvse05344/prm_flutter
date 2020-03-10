@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:prm_flutter/bloc/productBloc.dart';
 import 'package:prm_flutter/model/product.dart';
 import 'package:prm_flutter/service/apiEnv.dart';
+import 'package:prm_flutter/style/myStyle.dart';
 import 'package:prm_flutter/style/texts.dart';
 
 import '../productDetailScreen.dart';
@@ -31,20 +32,10 @@ class _ProductCardState extends State<ProductCard> {
     return InkWell(
       onTap: onTap,
       child: Container(
-        margin: EdgeInsets.all(5),
-        width: size.width/2-10,
+        margin: EdgeInsets.all(10),
+        width: size.width/2-20,
         height: 300,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey,
-              blurRadius: 5,
-              offset: Offset(0,5)
-            )
-          ]
-        ),
+        decoration: MyStyle.upBox,
         child: Stack(
           children: <Widget>[
             Column(
@@ -68,7 +59,7 @@ class _ProductCardState extends State<ProductCard> {
             ),
             Positioned(
               bottom: 5,
-              right: -30,
+              right: -10,
               child: Container(
                   width: 130,
                   child: Row(

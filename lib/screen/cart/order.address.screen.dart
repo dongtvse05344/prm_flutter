@@ -2,8 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:prm_flutter/bloc/cart.bloc.dart';
+import 'package:prm_flutter/bloc/user.address.bloc.dart';
 import 'package:prm_flutter/bloc/user.bloc.dart';
+import 'package:prm_flutter/model/user.dart';
+import 'package:prm_flutter/model/useraddress.dart';
+import 'package:prm_flutter/screen/cart/create.address.screen.dart';
 import 'package:prm_flutter/screen/cart/order.confirm.screen.dart';
+import 'package:prm_flutter/screen/cart/widget/address.card.screen.dart';
 import 'package:prm_flutter/style/colors.dart';
 import 'package:prm_flutter/style/texts.dart';
 import 'package:prm_flutter/widget/MessageDialog.dart';
@@ -14,42 +19,40 @@ class OrderAddressScreen extends StatefulWidget {
 }
 
 class _OrderAddressScreenState extends State<OrderAddressScreen> {
-
-  TextEditingController textEditingController = new TextEditingController();
+  int _radioSelected = -1;
   CartBloc _cartBloc;
   UserBloc _userBloc;
+  UserAddressBloc _addressBloc;
   int addressSrc =0 ;
   gotoNext() {
-    var address = textEditingController.text;
-    if(address ==null || address.length ==0) {
-      MessageDialog.showMessageDialog(context, "Error", "Address can't be blank");
+    if(_radioSelected == -1){
+      MessageDialog.showMessageDialog(context, "Erro", "Please select the address");
       return;
     }
-    _cartBloc.setAddress(address);
-    Navigator.of(context).push(MaterialPageRoute(
+    _cartBloc.setAddress(_addressBloc.addresses[_radioSelected]);
+
+     Navigator.of(context).push(MaterialPageRoute(
       builder: (context)=> OrderConfirmScreen()
     ));
   }
 
-  void changeAddress(int address) {
-    if(address ==0) {
-      textEditingController.text = _userBloc.user.homeAddress;
-    }
-    else {
-      textEditingController.text = _userBloc.user.companyAddress;
-    }
-    print("${textEditingController.text}");
+
+  gotoCreateAddress(){
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context)=> CreateAddressScreen()
+    ));
+  }
+  onChanged(int t){
     setState(() {
-      addressSrc = address;
+      _radioSelected = t;
     });
   }
   @override
   Widget build(BuildContext context) {
     _cartBloc = Provider.of<CartBloc>(context);
     _userBloc = Provider.of<UserBloc>(context);
-    if(textEditingController.text == null || textEditingController.text.length ==0 ){
-      textEditingController.text = _userBloc.user.homeAddress;
-    }
+    _addressBloc = Provider.of<UserAddressBloc>(context);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -67,70 +70,40 @@ class _OrderAddressScreenState extends State<OrderAddressScreen> {
           child: Column(
             children: <Widget>[
               SizedBox(height: 10,),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  Expanded(
-                    flex: 1,
-                    child: InkWell(
-                      onTap: ()=>changeAddress(0),
-                      child: AnimatedContainer(
-                        duration: Duration(milliseconds: 300),
-                        margin: EdgeInsets.symmetric(horizontal: 20),
-                        width: 200,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          color: addressSrc == 0 ? MyColor.firstColor : Colors.white,
-                            border: Border.all(width: 1,color: MyColor.firstColor),
-                            borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Center(
-                          child: Text("Home",style: TextStyle(color: addressSrc != 0 ? MyColor.firstColor : Colors.white,fontWeight: FontWeight.bold,fontSize: 20),),
-                        ),
-                      ),
-                    ),
+              Consumer<UserAddressBloc>(
+                builder: (context, bloc, child){
+                  List<UserAddress> addresses = bloc.addresses;
+                  if(addresses != null) {
+                    return ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      itemCount:  addresses.length,
+                      itemBuilder: (context,i){
+                        return AddressCard(addresses[i],i,_radioSelected,onChanged);
+                      },
+                    );
+                  } else {
+                    return Container(
+                    );
+                  }
+                },
+              ),
+              InkWell(
+                onTap: gotoCreateAddress,
+                child: Container(
+                  color: Colors.white,
+                  padding: EdgeInsets.all(16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text("Add new address"),
+                      Icon(Icons.arrow_forward_ios),
+                    ],
                   ),
-                  Expanded(
-                    flex: 1,
-                    child: InkWell(
-                      onTap: () => changeAddress(1),
-                      child: AnimatedContainer(
-                        duration: Duration(milliseconds: 300),
-                        margin: EdgeInsets.symmetric(horizontal: 20),
-                        width: 200,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          color: addressSrc == 1 ? MyColor.firstColor : Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(width: 1,color: MyColor.firstColor)
-                        ),
-                        child: Center(
-                          child: Text("Company",style: TextStyle(color: addressSrc !=1 ? MyColor.firstColor : Colors.white,fontWeight: FontWeight.bold,fontSize: 20),),
-                        ),
-                      ),
-                    ),
-                  )
-                ],
+                ),
               ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-                child:  TextFormField(
-                      controller: textEditingController,
-                      keyboardType: TextInputType.multiline,
-                      minLines: 3,
-                      maxLines: null,
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: MyColor.firstColor
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: MyColor.firstColor
-                          ),
-                        ),
-                      ),
-                    ),
-              ),
+              SizedBox(height: 30,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[

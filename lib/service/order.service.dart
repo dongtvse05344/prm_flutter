@@ -95,17 +95,21 @@ class OrderService {
 }
 class OrderCM {
   String address,note;
+  String receiver,phoneNumber;
   List<OrderDetailCM> orderDetailCMs;
 
-  OrderCM({this.address, this.note, this.orderDetailCMs});
+  OrderCM({this.address, this.note, this.orderDetailCMs,this.receiver, this.phoneNumber});
 
   Map<String, dynamic> toJson() {
     var result =  {
       'address': address,
       'note':note,
+      'receiver':receiver,
+      'phoneNumber':phoneNumber,
       'orderDetailCMs':
         orderDetailCMs.map((o) =>o.toJson()).toList()
       ,
+
     };
 
     print(result);

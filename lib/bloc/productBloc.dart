@@ -28,7 +28,6 @@ class ProductBloc {
   }
 
   void getTopProducts() {
-    if(products == null || products.length ==0) {
       ProductService.getTopProducts().then((rs)  =>
       {
         products = rs,
@@ -39,11 +38,6 @@ class ProductBloc {
         _productsController.sink.add(products);
       });
     }
-    else {
-      _productsController.sink.add(products);
-    }
-  }
-
   void getProductImage() {
     _imagesController = new StreamController();
     if(seletedProduct ==null) return;

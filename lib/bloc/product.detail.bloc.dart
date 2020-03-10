@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:prm_flutter/model/color.dart';
 import 'package:prm_flutter/model/product.dart';
+import 'package:prm_flutter/model/rate.dart';
 import 'package:prm_flutter/service/productService.dart';
 
 class ProductDetailBloc {
@@ -20,6 +21,7 @@ class ProductDetailBloc {
   List<String> images;
   List<String> sizes;
   List<MColor> colors;
+  List<Rate> rates;
   var _productController = StreamController();
   Stream get productStream => _productController.stream;
 
@@ -31,6 +33,9 @@ class ProductDetailBloc {
 
   var _colorsController = StreamController.broadcast();
   Stream get colorsStream => _colorsController.stream;
+
+  var _rateController = StreamController.broadcast();
+  Stream get rateStream => _rateController.stream;
 
   void getProduct(int id) async {
     try{
@@ -82,11 +87,26 @@ class ProductDetailBloc {
       _colorsController.sink.add(colors);
     });
   }
+
+  void getProductRates() {
+    if(product ==null) return;
+    ProductService.getRates(product.id).then((rs) =>
+    {
+      rates = rs,
+      _rateController.sink.add(rates)
+    }
+    ).catchError((e){
+      print(e);
+      sizes = List();
+      _rateController.sink.add(rates);
+    });
+  }
   void dispose(){
     _productController.close();
     _imagesController.close();
     _sizesController.close();
     _colorsController.close();
+    _rateController.close();
   }
 
 }

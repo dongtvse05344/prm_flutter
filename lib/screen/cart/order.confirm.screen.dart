@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:prm_flutter/bloc/auth.bloc.dart';
 import 'package:prm_flutter/bloc/cart.bloc.dart';
 import 'package:prm_flutter/bloc/order.bloc.dart';
+import 'package:prm_flutter/model/product.dart';
+import 'package:prm_flutter/model/useraddress.dart';
 import 'package:prm_flutter/screen/cart/order.done.screen.dart';
+import 'package:prm_flutter/screen/cart/widget/address.card.screen.dart';
+import 'package:prm_flutter/screen/cart/widget/product.card.dart';
 import 'package:prm_flutter/service/order.service.dart';
 import 'package:prm_flutter/style/colors.dart';
 import 'package:prm_flutter/style/texts.dart';
@@ -22,6 +26,8 @@ class _OrderConfirmScreenState extends State<OrderConfirmScreen> {
     List<OrderDetailCM> orderDetai = List();
     data.address = _cartBloc.order.address;
     data.note =  _cartBloc.order.note;
+    data.phoneNumber = _cartBloc.order.phoneNumber;
+    data.receiver = _cartBloc.order.receiver;
     _cartBloc.cart.forEach((i,product) {
       orderDetai.add(new OrderDetailCM(
         color: product.color,
@@ -64,13 +70,53 @@ class _OrderConfirmScreenState extends State<OrderConfirmScreen> {
             child: SingleChildScrollView(
               child: Column(
                 children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text("Order information"),
-                      Text("Edit")
-                    ],
-                  )
+                  Container(
+                    padding: EdgeInsets.only(bottom: 50),
+                    child: Consumer<CartBloc>(
+                      builder: (context, cartBloc, child) {
+                        var cart = cartBloc.cart;
+                        if (cart.length > 0) {
+                          return ListView.separated(
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              separatorBuilder: (context, index) => Divider(),
+                              scrollDirection: Axis.vertical,
+                              itemCount: cart.length,
+                              itemBuilder: (context, index) {
+                                int giftIndex = cart.keys.toList()[index];
+                                Product product = cart[giftIndex];
+                                return ProductCard(product,false);
+                              });
+                        } else {
+                          return Container(
+                            child: Center(
+                              child: Text("Your cart is empty"),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(bottom: 50),
+                    child: Consumer<CartBloc>(
+                      builder: (context, cartBloc, child) {
+                        var order = cartBloc.order;
+                        if (order != null) {
+                          return AddressCard(
+                            new UserAddress(address: order.address, phoneNumber: order.phoneNumber, name: order.receiver)
+                            ,null,null,null
+                          );
+                        } else {
+                          return Container(
+                            child: Center(
+                              child: Text("Your cart is empty"),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -87,8 +133,20 @@ class _OrderConfirmScreenState extends State<OrderConfirmScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Text("Total Amount: "),
-                      Text("9.99 \$")
+                      Text("Total amount: ",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: MyColor.firstColor,
+                            fontSize: 18
+                        ),),
+                      Text(
+                        " ${_cartBloc.totalAmount()} \$",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red,
+                          fontSize: 22,
+                        ),
+                      ),
                     ],
                   ),
                   InkWell(
@@ -101,7 +159,22 @@ class _OrderConfirmScreenState extends State<OrderConfirmScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Center(
-                        child: Text("Order"),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Icon(
+                              Icons.shopping_cart,
+                              color: Colors.white,
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              "Check out",
+                              style: MyText.bottomBarTitle,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   )

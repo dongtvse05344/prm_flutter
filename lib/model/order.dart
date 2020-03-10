@@ -10,9 +10,10 @@ class Order {
   DateTime dateCreated;
   String formatDate;
   int currentStatus;
+  String receiver,phoneNumber;
   List<OrderDetail> orderDetails;
   List<OrderStatus> orderStatues;
-  Order({this.id, this.address, this.note,this.totalAmount,this.dateCreated,this.formatDate,this.currentStatus});
+  Order({this.id, this.address, this.note,this.totalAmount,this.dateCreated,this.formatDate,this.currentStatus,this.receiver,this.phoneNumber});
 
   factory Order.fromJson(Map<String, dynamic> json) {
     var _dateCreated = DateTime.parse(json["DateCreated"]);
@@ -20,6 +21,8 @@ class Order {
     return Order(
       id: json["Id"],
       address: json["Address"],
+        receiver: json["Receiver"],
+      phoneNumber: json["PhoneNumber"],
       note: json["Note"],
       totalAmount: json["TotalAmount"],
       dateCreated: _dateCreated,

@@ -10,7 +10,6 @@ class CollectionBloc with ChangeNotifier {
     getCollection();
   }
   void getCollection() {
-    if(_collection == null || _collection.length ==0) {
       CollectionService.getCollections().then((rs)  =>
       {
         _collection = rs,
@@ -20,10 +19,5 @@ class CollectionBloc with ChangeNotifier {
         print(e);
         _collection = List();
       });
-    }
-    else{
-      notifyListeners();
-    }
-
   }
 }

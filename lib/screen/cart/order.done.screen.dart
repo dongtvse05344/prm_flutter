@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prm_flutter/style/colors.dart';
+import 'package:prm_flutter/style/texts.dart';
 
 class OrderDoneScreen extends StatefulWidget {
   @override
@@ -13,32 +14,46 @@ class _OrderDoneScreenState extends State<OrderDoneScreen> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    return Scaffold(
+    return  Scaffold(
       body: Stack(
         children: <Widget>[
           Container(
             constraints: BoxConstraints.expand(),
+            color: MyColor.white,
             child: SingleChildScrollView(
               child: Column(
                 children: <Widget>[
                   Container(
                     width: size.width,
                     height: 300,
-                    color: Colors.white,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Container(
-                            width: 60,
-                            height: 60,
+                            width: 100,
+                            height: 100,
                             decoration: BoxDecoration(
-                              color: MyColor.firstColor,
+                              color: MyColor.white,
                               borderRadius: BorderRadius.circular(50),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey,
+                                  offset: Offset(5,5),
+                                  blurRadius: 5,
+                                ),
+                                BoxShadow(
+                                  color: Colors.white,
+                                  offset: Offset(-5,-5),
+                                  blurRadius: 5,
+                                )
+                              ],
                             ),
-                            child: Icon(Icons.done,size: 20,color: Colors.white,)
+                            child: Icon(Icons.done,size: 40,color: MyColor.firstColor,)
                         ),
-                        Text("Thank you"),
-                        Text("Order successfully"),
+                        SizedBox(height: 10,),
+                        Text("Thank you",style: MyText.littleTitle,),
+                        SizedBox(height: 5,),
+                        Text("Order successfully",style: MyText.des),
                       ],
                     ),
                   )
@@ -51,7 +66,10 @@ class _OrderDoneScreenState extends State<OrderDoneScreen> {
             child: Container(
               width: size.width,
               height: 85,
-              color: Colors.white,
+              decoration: BoxDecoration(
+                color: MyColor.white,
+
+              ),
               padding: EdgeInsets.all(16),
               child: InkWell(
                 onTap: goToHome,
@@ -59,11 +77,23 @@ class _OrderDoneScreenState extends State<OrderDoneScreen> {
                   width: size.width,
                   height: 60,
                   decoration: BoxDecoration(
-                    border: Border.all(width: 1, color: MyColor.firstColor),
                     borderRadius: BorderRadius.circular(10),
+                    color: MyColor.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey,
+                        offset: Offset(5,5),
+                        blurRadius: 5,
+                      ),
+                      BoxShadow(
+                        color: Colors.white,
+                        offset: Offset(-5,-5),
+                        blurRadius: 5,
+                      )
+                    ],
                   ),
                   child: Center(
-                    child: Text("Come back Home Screen"),
+                    child: Text("Come back Home Screen",style: MyText.littleTitle,),
                   ),
                 ),
               ),

@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:prm_flutter/bloc/cart.bloc.dart';
 import 'package:prm_flutter/model/product.dart';
 import 'package:prm_flutter/service/apiEnv.dart';
 import 'package:prm_flutter/style/colors.dart';
+import 'package:prm_flutter/style/myStyle.dart';
+import 'package:prm_flutter/style/texts.dart';
 import 'package:provider/provider.dart';
 
 class ProductCard extends StatefulWidget {
   final Product product;
-
-  ProductCard(this.product);
+  final bool canEdit;
+  ProductCard(this.product,this.canEdit);
 
   @override
   _ProductCardState createState() => _ProductCardState();
@@ -24,15 +27,11 @@ class _ProductCardState extends State<ProductCard> {
   Widget build(BuildContext context) {
     _bloc = Provider.of<CartBloc>(context);
     return Container(
-      height: 100,
+      height: 160,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: MyColor.white,
         boxShadow: [
-          BoxShadow(
-            color: Colors.grey,
-            offset: Offset(5,5),
-            blurRadius: 5
-          )
+
         ]
       ),
       child: Row(
@@ -53,29 +52,92 @@ class _ProductCardState extends State<ProductCard> {
           ),
           Expanded(
             flex: 3,
-            child: Column(
-              children: <Widget>[
-                Text("${widget.product.name}"),
-                Text("${widget.product.color}"),
-                Text("${widget.product.size}"),
-                Text("${widget.product.quantity}"),
-              ],
+            child: Container(
+              padding: EdgeInsets.all(10),
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        flex: 5,
+                        child: Container(
+                          padding: EdgeInsets.only(left: 5),
+                            child: Text("${widget.product.name}",style: MyText.productTitle1,
+                            )),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 5,),
+                  Row(
+                    children: <Widget>[
+                      Expanded(flex: 1,
+                          child: Container(
+                          padding: EdgeInsets.all(5),
+                          decoration: MyStyle.upBox,
+                          child: Icon(FontAwesomeIcons.palette,color: Colors.grey)
+                      )),
+                      Expanded(
+                        flex: 5,
+                        child: Container(
+                            padding: EdgeInsets.only(left: 5),
+                            child: Text(" ${widget.product.color}"
+                            )),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 5,),
+
+                  Row(
+                    children: <Widget>[
+                      Expanded(flex: 1,child: Container(
+                          padding: EdgeInsets.all(5),
+                          decoration: MyStyle.upBox,
+                          child: Icon(FontAwesomeIcons.windowMaximize,color: Colors.grey))),
+                      Expanded(
+                        flex: 5,
+                        child: Container(
+                            padding: EdgeInsets.only(left: 5),
+                            child: Text(" ${widget.product.size}"
+                            )),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 5,),
+
+                  Row(
+                    children: <Widget>[
+                      Expanded(flex: 1,child: Container(
+                          padding: EdgeInsets.all(5),
+                          decoration: MyStyle.upBox,
+                          child: Icon(FontAwesomeIcons.luggageCart,color: Colors.grey,))),
+                      Expanded(
+                        flex: 5,
+                        child: Container(
+                            padding: EdgeInsets.only(left: 5),
+                            child: Text(" ${widget.product.quantity}"
+                            )),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-          Expanded(
+          widget.canEdit ? Expanded(
             flex: 1,
             child: InkWell(
               onTap: clearCartItem,
               child: Container(
-                decoration: BoxDecoration(
-                  color: MyColor.firstColor
-                ),
                 child: Center(
-                  child: Text("Clear",style: TextStyle(color: Colors.white, fontSize: 22),),
+                  child: Container(
+                      decoration: MyStyle.upBox,
+                      padding: EdgeInsets.all(10),
+                      child: Icon(Icons.close)
+                  ),
                 ),
               ),
             ),
-          )
+          ) : Container()
         ],
       ),
     );

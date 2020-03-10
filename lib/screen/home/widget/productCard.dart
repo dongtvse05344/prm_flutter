@@ -4,6 +4,7 @@ import 'package:prm_flutter/model/product.dart';
 import 'package:prm_flutter/screen/product/productDetailScreen.dart';
 import 'package:prm_flutter/service/apiEnv.dart';
 import 'package:prm_flutter/style/colors.dart';
+import 'package:prm_flutter/style/myStyle.dart';
 import 'package:prm_flutter/style/texts.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
@@ -36,16 +37,7 @@ class _ProductCardState extends State<ProductCard> {
               margin: EdgeInsets.only(top: 20, right: 20, bottom: 10),
               width: 260,
               height: 160,
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(5),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey,
-                      offset: Offset(3, 0),
-                      blurRadius: 5,
-                    )
-                  ]),
+              decoration: MyStyle.upBox,
               child: Row(
                 children: <Widget>[
                   Image.network(

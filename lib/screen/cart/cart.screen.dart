@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:prm_flutter/bloc/auth.bloc.dart';
 import 'package:prm_flutter/bloc/cart.bloc.dart';
+import 'package:prm_flutter/bloc/user.address.bloc.dart';
 import 'package:prm_flutter/bloc/user.bloc.dart';
 import 'package:prm_flutter/model/product.dart';
+import 'package:prm_flutter/model/useraddress.dart';
 import 'package:prm_flutter/screen/auth/loginScreen.dart';
+import 'package:prm_flutter/screen/cart/widget/address.card.screen.dart';
 import 'package:prm_flutter/screen/cart/widget/product.card.dart';
 import 'package:prm_flutter/screen/home/homeScreen.dart';
 import 'package:prm_flutter/screen/cart/order.address.screen.dart';
@@ -22,11 +25,11 @@ class _CartScreenState extends State<CartScreen> {
   AuthBloc _authBloc;
   UserBloc _userBloc;
   CartBloc _cartBloc;
+  UserAddressBloc _addressBloc;
   addToCart() async {
     if (await _authBloc.isLogin() == AuthBloc.OK) {
       if (_userBloc.user == null) await _userBloc.getUserData(_authBloc.token);
-      _cartBloc.setAddress(_userBloc.user.homeAddress);
-
+      _addressBloc.getAddresses(_authBloc.token);
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => OrderAddressScreen()));
     } else {
@@ -44,7 +47,7 @@ class _CartScreenState extends State<CartScreen> {
     _authBloc = Provider.of<AuthBloc>(context);
     _userBloc = Provider.of<UserBloc>(context);
     _cartBloc = Provider.of<CartBloc>(context);
-
+    _addressBloc= Provider.of<UserAddressBloc>(context);
     var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
@@ -85,7 +88,7 @@ class _CartScreenState extends State<CartScreen> {
                               itemBuilder: (context, index) {
                                 int giftIndex = cart.keys.toList()[index];
                                 Product product = cart[giftIndex];
-                                return ProductCard(product);
+                                return ProductCard(product,true);
                               });
                         } else {
                           return Container(
@@ -97,51 +100,77 @@ class _CartScreenState extends State<CartScreen> {
                       },
                     ),
                   ),
+
                 ],
               ),
             ),
           ),
           Positioned(
               bottom: 0,
-              height: 80,
+              height: 120,
               width: size.width,
               child: Container(
                 padding: EdgeInsets.all(16),
                 child: Consumer<CartBloc>(builder: (context, cartBloc, child) {
                   var cart = cartBloc.cart;
                   if (cart.length > 0) {
-                    return InkWell(
-                      onTap: addToCart,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: MyColor.firstColor,
-                          borderRadius: BorderRadius.circular(10),
+                    return Column(
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text("Total amount: ",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: MyColor.firstColor,
+                                  fontSize: 18
+                              ),),
+                            Text(
+                              " ${_cartBloc.totalAmount()} \$",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red,
+                                fontSize: 22,
+                              ),
+                            ),
+                          ],
                         ),
-                        child: Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Icon(
-                                Icons.shopping_cart,
-                                color: Colors.white,
+                        InkWell(
+                          onTap: addToCart,
+                          child: Container(
+                            height: 60,
+                            decoration: BoxDecoration(
+                              color: MyColor.firstColor,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.shopping_cart,
+                                    color: Colors.white,
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(
+                                    "Check out",
+                                    style: MyText.bottomBarTitle,
+                                  ),
+                                ],
                               ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Text(
-                                "Check out",
-                                style: MyText.bottomBarTitle,
-                              ),
-                            ],
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     );
                   }
                   else {
                     return InkWell(
                       onTap: backToHome,
                       child: Container(
+                        height: 65,
                         decoration: BoxDecoration(
 
                           border: Border.all(width: 1,color: MyColor.firstColor,),

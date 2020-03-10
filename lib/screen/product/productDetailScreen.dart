@@ -4,10 +4,14 @@ import 'package:prm_flutter/bloc/cart.bloc.dart';
 import 'package:prm_flutter/bloc/product.detail.bloc.dart';
 import 'package:prm_flutter/bloc/productBloc.dart';
 import 'package:prm_flutter/model/product.dart';
+import 'package:prm_flutter/model/rate.dart';
 import 'package:prm_flutter/screen/cart/cart.screen.dart';
 import 'package:prm_flutter/screen/product/widget/BottomSheetConfirm.dart';
+import 'package:prm_flutter/screen/product/widget/feedback.card.dart';
+import 'package:prm_flutter/screen/product/widget/rate.card.dart';
 import 'package:prm_flutter/service/apiEnv.dart';
 import 'package:prm_flutter/style/colors.dart';
+import 'package:prm_flutter/style/myStyle.dart';
 import 'package:prm_flutter/style/texts.dart';
 import 'package:provider/provider.dart';
 
@@ -21,6 +25,7 @@ class ProductDetailScreen extends StatefulWidget {
 }
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
+
   ProductDetailBloc _bloc = new ProductDetailBloc();
   String _seletedImage;
   final scrollController = new ScrollController();
@@ -32,6 +37,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     await _bloc.getProduct(widget.id);
     _product = _bloc.product;
     _bloc.getProductImage();
+    _bloc.getProductRates();
     ProductDetailBloc.setInstance(_bloc);
   }
 
@@ -90,6 +96,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         child: Stack(
           children: <Widget>[
             Container(
+              color: MyColor.white,
               constraints: BoxConstraints.expand(),
               child: SingleChildScrollView(
                 controller: scrollController,
@@ -108,16 +115,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                   width: double.infinity,
                                   child: AnimatedSwitcher(
                                     duration: Duration(milliseconds: 300),
-                                    child:
-                                    _seletedImage ==null ?
-                                    Image.network(
-                                      "${Env.imageEndPoint}${_product.bannerPath}",
-                                      fit: BoxFit.cover,
-                                    ) :
-                                    Image.network(
-                                      "${Env.imageEndPoint}${_seletedImage}",
-                                      fit: BoxFit.cover,
-                                    ),
+                                    child: _seletedImage == null
+                                        ? Image.network(
+                                            "${Env.imageEndPoint}${_product.bannerPath}",
+                                            fit: BoxFit.cover,
+                                          )
+                                        : Image.network(
+                                            "${Env.imageEndPoint}${_seletedImage}",
+                                            fit: BoxFit.cover,
+                                          ),
                                   ),
                                 ),
                                 Positioned(
@@ -168,20 +174,23 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                     style: TextStyle(color: Colors.grey),
                                   ),
                                   Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
-                                      Icon(
-                                        Icons.favorite,
-                                        color: Colors.yellow,
+                                      Row(
+                                        children: <Widget>[
+                                          Icon(
+                                            Icons.favorite,
+                                            color: Colors.yellow,
+                                          ),
+                                          Text("${_product.star}"),
+
+                                        ],
                                       ),
-                                      Text("${_product.star}"),
-                                      SizedBox(
-                                        width: 20,
+                                      Container(
+                                          decoration: MyStyle.upBox,
+                                          padding: EdgeInsets.all(10),
+                                          child: Text("\$ ${_product.currentPrice}",style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold),)
                                       ),
-                                      Icon(
-                                        Icons.timelapse,
-                                        color: Colors.grey,
-                                      ),
-                                      Text("\$ ${_product.currentPrice}"),
                                     ],
                                   ),
                                   Divider(),
@@ -220,8 +229,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                               itemCount: data.length,
                                               itemBuilder: (context, index) {
                                                 return InkWell(
-                                                  onTap: () => changeSeletedImage(
-                                                      data[index]),
+                                                  onTap: () =>
+                                                      changeSeletedImage(
+                                                          data[index]),
                                                   child: Container(
                                                     width: 50,
                                                     height: 50,
@@ -238,27 +248,51 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                           }
                                         }),
                                   ),
+
+                                  Container(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 10),
+                                      child: StreamBuilder(
+                                          initialData: _bloc.rates,
+                                          stream: _bloc.rateStream,
+                                          builder: (context, snapshot) {
+                                            if (snapshot.hasData) {
+                                              List<Rate> data = snapshot.data;
+                                              if(data.length>0) {
+                                                return Column(
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                                  children: <Widget>[
+                                                    Text("Rating and Feedback ",
+                                                        style: MyText.cardTitle),
+                                                    RateCard(data[data.length-1]),
+                                                    ListView.builder(
+                                                      scrollDirection:
+                                                      Axis.vertical,
+                                                      physics: NeverScrollableScrollPhysics(),
+                                                      shrinkWrap: true,
+                                                      itemCount: data.length-1,
+                                                      itemBuilder:
+                                                          (context, index) {
+                                                        return InkWell(
+                                                          child: FeedBackCard(data[index]),
+                                                        );
+                                                      },
+                                                    ),
+                                                  ],
+                                                );
+                                              }else {
+                                                return Container();
+                                              }
+                                            } else {
+                                              return Container(
+                                                child: Text("Loading ..."),
+                                              );
+                                            }
+                                          })),
                                   Container(
                                     height: 20,
                                     width: double.infinity,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Text(
-                                        "My services",
-                                        style: MyText.cardTitle,
-                                      ),
-                                    ],
-                                  ),
-                                  Container(
-                                    child: ListView(
-                                      scrollDirection: Axis.vertical,
-                                      physics: NeverScrollableScrollPhysics(),
-                                      shrinkWrap: true,
-                                      children: <Widget>[],
-                                    ),
                                   ),
                                 ],
                               ),
@@ -320,28 +354,45 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             ),
             Positioned(
               bottom: 0,
-              height: 50,
+              height: 80,
               width: media.size.width,
-              child: InkWell(
-                onTap: onAddToCart,
-                child: Container(
-                  color: MyColor.firstColor,
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(
-                          Icons.shopping_cart,
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: InkWell(
+                  onTap: onAddToCart,
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: MyColor.firstColor,
+                        borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey,
+                          offset: Offset(2,2),
+                          blurRadius: 5,
+                        ),
+                        BoxShadow(
                           color: Colors.white,
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Text(
-                          "Add to Cart",
-                          style: MyText.bottomBarTitle,
-                        ),
-                      ],
+                          offset: Offset(-5,-5),
+                          blurRadius: 5,
+                        )
+                      ]),
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(
+                            Icons.shopping_cart,
+                            color: Colors.white,
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                            "Add to Cart",
+                            style: MyText.bottomBarTitle,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

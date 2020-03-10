@@ -65,7 +65,31 @@ class _AccountFragmentState extends State<AccountFragment> {
                     return Consumer<UserBloc>(
                       builder: (context, userBloc, child){
                         var user = userBloc.user;
-                        if(user == null) { return Text("....");}
+                        if(user == null) { return InkWell(
+                          onTap: gotoLogin,
+                          child: Container(
+                            height: 50,
+                            color: MyColor.firstColor,
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Icon(
+                                    FontAwesomeIcons.signInAlt,
+                                    color: Colors.white,
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(
+                                    " Login Now",
+                                    style: MyText.bottomBarTitle,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );}
                         else
                         return Column(
                           children: <Widget>[

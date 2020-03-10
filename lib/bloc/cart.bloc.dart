@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:prm_flutter/model/order.dart';
 import 'package:prm_flutter/model/product.dart';
+import 'package:prm_flutter/model/useraddress.dart';
 
 class CartBloc with ChangeNotifier {
   Map<int, Product> _cart = {};
@@ -11,9 +12,19 @@ class CartBloc with ChangeNotifier {
   Order _order = Order();
   Order get order => _order;
 
-  void setAddress(String address) {
+  double totalAmount (){
+    double res = 0;
+    _cart.forEach((i,p){
+      res += p.quantity *p.currentPrice;
+    });
+    return res;
+  }
+
+  void setAddress(UserAddress userAddress) {
     _order = Order();
-    _order.address = address;
+    _order.address = userAddress.address;
+    _order.receiver = userAddress.name;
+    _order.phoneNumber = userAddress.phoneNumber;
     notifyListeners();
   }
 

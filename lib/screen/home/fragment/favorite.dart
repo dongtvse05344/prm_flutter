@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:prm_flutter/bloc/categoryBloc.dart';
 import 'package:prm_flutter/screen/home/widget/categoryCard.dart';
+import 'package:prm_flutter/style/colors.dart';
 
 class FavoriteFragment extends StatefulWidget {
   @override
@@ -22,8 +23,7 @@ class _FavoriteFragmentState extends State<FavoriteFragment> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Container(
-        decoration: BoxDecoration(
-        ),
+        color: MyColor.white,
         child: Center(
           child: SingleChildScrollView(
             child: Column(

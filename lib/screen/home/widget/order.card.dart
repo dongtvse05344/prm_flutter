@@ -51,8 +51,15 @@ class _OrderCardState extends State<OrderCard> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text("Address: "),
-                Text(widget._order.address),
+                Expanded(
+                    flex: 1,
+                    child: Text("Address: ")),
+                Expanded(
+                  flex: 4,
+                  child: Container(
+                      child: Text(widget._order.address,textAlign: TextAlign.right,)
+                  ),
+                ),
               ],
             ),
             Row(

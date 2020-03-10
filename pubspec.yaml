@@ -36,6 +36,7 @@ dependencies:
   firebase_core: ^0.4.0+9
   firebase_auth: ^0.14.0+5
   google_sign_in:
+  shimmer: 1.1.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
