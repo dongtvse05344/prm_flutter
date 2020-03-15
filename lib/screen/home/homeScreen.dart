@@ -1,4 +1,5 @@
 import 'package:bubble_bottom_bar/bubble_bottom_bar.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:prm_flutter/bloc/auth.bloc.dart';
 import 'package:prm_flutter/bloc/categoryBloc.dart';
@@ -9,6 +10,7 @@ import 'package:prm_flutter/screen/home/fragment/home.dart';
 import 'package:prm_flutter/service/appEnv.dart';
 import 'package:prm_flutter/style/colors.dart';
 import 'package:prm_flutter/style/texts.dart';
+import 'package:prm_flutter/widget/MessageDialog.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -24,9 +26,50 @@ class _HomeScreenState extends State<HomeScreen> {
   int bottom_nav_index = 0;
   String _appLabel = "Home";
 
+  final FirebaseMessaging _fcm = FirebaseMessaging();
+
+  _setMessage(Map<String,dynamic> message) {
+    final notification = message['notification'];
+    final data = message['data'];
+    final String title = notification['title'];
+    final String body = notification['body'];
+    final String mMessage = data['message'];
+    MessageDialog.showMessageDialog(context, title, mMessage);
+    print("2132132");
+  }
+
+  _getToken() async {
+    _fcm.getToken().then((deviceToken){
+      print("Device Token :${deviceToken}");
+    }).catchError((e) => print(e));
+  }
+
+  _configureFirebaseListeners() {
+    _fcm.configure(
+      onMessage: (Map<String,dynamic> message) async {
+        print('onMessage: $message');
+        _setMessage(message);
+      },
+      onLaunch: (Map<String,dynamic> message) async {
+        print('onLaunch: $message');
+        _setMessage(message);
+
+      },
+      onResume: (Map<String,dynamic> message) async {
+        print('onResume: $message');
+        _setMessage(message);
+
+      },
+
+    );
+  }
 
   @override
   void initState() {
+    // TODO: implement initState
+    super.initState();
+    _getToken();
+    _configureFirebaseListeners();
   }
 
   void changBottomIndex(int index) {

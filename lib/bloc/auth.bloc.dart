@@ -33,9 +33,9 @@ class AuthBloc  with ChangeNotifier {
       return AuthBloc.START;
     }
   }
-  void fetchToken(String username,String password, listenData) async {
+  void fetchToken(String username,String password, String deviceId, listenData) async {
     listenData(AuthBloc.START);
-    AuthService.fetchToken(username,password).then((rs) async =>
+    AuthService.fetchToken(username,password,deviceId).then((rs) async =>
     {
         _token = rs.access_token,
         shareRefService.setToken(rs),

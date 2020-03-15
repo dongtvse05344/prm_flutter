@@ -10,7 +10,7 @@ class AuthService {
   static String infoPath = "api/Auth/info";
   static String registerPath = "api/Auth/Register";
   static String ggPath = "api/Auth/Google";
-  static Future<Token> fetchToken(String username, String password) async {
+  static Future<Token> fetchToken(String username, String password, String deviceId) async {
 
     final response = await http
         .post("${Env.endPoint}$loginPath",
@@ -18,7 +18,7 @@ class AuthService {
           "Accept": "application/json",
           "content-type": "application/json"
         } ,
-        body: json.encode({"username":username,"password":password})
+        body: json.encode({"username":username,"password":password,"deviceId":deviceId})
     );
     if(response.statusCode ==200) {
       Map<String,dynamic> res  = json.decode(response.body);

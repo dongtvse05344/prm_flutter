@@ -7,6 +7,7 @@ import 'package:prm_flutter/style/colors.dart';
 import 'package:prm_flutter/style/myStyle.dart';
 import 'package:prm_flutter/style/texts.dart';
 import 'package:provider/provider.dart';
+import 'dart:math' as math;
 
 class ProductCard extends StatefulWidget {
   final Product product;
@@ -62,7 +63,7 @@ class _ProductCardState extends State<ProductCard> {
                         flex: 5,
                         child: Container(
                           padding: EdgeInsets.only(left: 5),
-                            child: Text("${widget.product.name}",style: MyText.productTitle1,
+                            child: Text("${widget.product.name.substring(0,math.min(20, widget.product.name.length))}",style: MyText.productTitle1,
                             )),
                       ),
                     ],

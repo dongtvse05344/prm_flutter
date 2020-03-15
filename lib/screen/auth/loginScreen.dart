@@ -1,4 +1,6 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+//import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:prm_flutter/bloc/auth.bloc.dart';
 import 'package:prm_flutter/screen/auth/signupScreen.dart';
 import 'package:prm_flutter/screen/auth/widget/loginButton.dart';
@@ -18,6 +20,9 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn();
+//  final FacebookLogin facebookLogin = FacebookLogin();
+  final FirebaseMessaging _fcm = FirebaseMessaging();
+
   Future<FirebaseUser> signInWithGoogle() async {
     final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
     final GoogleSignInAuthentication googleSignInAuthentication =
@@ -39,10 +44,25 @@ class _LoginScreenState extends State<LoginScreen> {
     return user;
   }
 
+  Future<FirebaseUser> signInWithFacebook() async {
+//    final FacebookLoginResult result = await facebookLogin.logIn(['email']);
+//
+//    if (result.status == FacebookLoginStatus.loggedIn) {
+//      final credential = FacebookAuthProvider.getCredential(
+//        accessToken: result.accessToken.token,
+//      );
+//      final user = (await _auth.signInWithCredential(credential)).user;
+//      print(user);
+//    }
+  }
+
   void signOutGoogle() async{
     await googleSignIn.signOut();
 
     print("User Sign Out");
+  }
+  void fbSignIn() {
+    signInWithFacebook();
   }
   void ggSignIn() {
     signInWithGoogle().then((rs)=>{
@@ -77,7 +97,8 @@ class _LoginScreenState extends State<LoginScreen> {
   _onLoginButtonClick() async {
     var username = _usernameController.text;
     var password = _passwordController.text;
-    _authBloc.fetchToken(username, password,tokenListener);
+    var deviceId = await _fcm.getToken();
+    _authBloc.fetchToken(username, password, deviceId,tokenListener);
   }
   tokenListener(data) {
     switch(data) {
@@ -219,7 +240,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     Row(
                       children: <Widget>[
-                        SocialButton(FontAwesomeIcons.facebookF),
+                        InkWell(
+                            onTap: fbSignIn,
+                            child: SocialButton(FontAwesomeIcons.facebookF)
+                        ),
                         SizedBox(width: 10,),
                         InkWell(
                             onTap: ggSignIn,
