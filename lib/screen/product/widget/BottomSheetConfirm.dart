@@ -9,6 +9,7 @@ import 'package:prm_flutter/service/apiEnv.dart';
 import 'package:prm_flutter/style/colors.dart';
 import 'package:prm_flutter/widget/MessageDialog.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 class BottomSheetConfirm extends StatefulWidget {
   @override
@@ -79,254 +80,248 @@ class _BottomSheetConfirmState extends State<BottomSheetConfirm> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     _cartBloc = Provider.of<CartBloc>(context);
-    return Container(
-      color: Colors.white,
-      height: 500,
-      child: Stack(
-        children: <Widget>[
-          Positioned(
-            child: Opacity(
-              opacity: 0.2,
-              child: Container(
-                height: 135,
-                width: size.width,
-                child: Image.network("${Env.imageEndPoint}${_product.bannerPath}",fit: BoxFit.cover,),
+    return Theme(
+      data: Theme.of(context).copyWith(canvasColor: Colors.white),
+      child: Container(
+        color: Colors.white,
+        height: 500,
+        child: Stack(
+          children: <Widget>[
+            Positioned(
+              child: Opacity(
+                opacity: 0.2,
+                child: Container(
+                  height: 135,
+                  width: size.width,
+                  child: Image.network("${Env.imageEndPoint}${_product.bannerPath}",fit: BoxFit.cover,),
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: <Widget>[
-                Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      Container(
-                          child: IconButton(icon: Icon(Icons.cancel), onPressed: goBack,)
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  height: 30,
-                  child: Text("${_product.name}", style: TextStyle(fontWeight: FontWeight.bold)),
-                ),
-
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 5),
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                    children: <Widget>[
-                      Container(
-                          width:60,
-                          child: Text("Size")
-                      ),
-                      Container(
-                        height: 50,
-                        width: size.width -120,
-                        child: StreamBuilder(
-                          stream: _productBloc.sizesStream,
-                          initialData: _productBloc.sizes,
-                          builder: (context, snapshot){
-                            if(snapshot.hasData){
-                              List<String> data = snapshot.data;
-                              return ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: data.length,
-                                itemBuilder: (context, index){
-                                  return InkWell(
-                                    onTap: ()=>setSize(data[index]),
-                                    child: AnimatedContainer(
-                                      duration: Duration(milliseconds: 300),
-                                      height: 40,
-                                      width: 40,
-                                      decoration: BoxDecoration(
-                                          border: Border.all(width: 1,color: Colors.grey),
-                                        borderRadius: BorderRadius.circular(5),
-                                        color: selectedSize == data[index] ? MyColor.firstColor : MyColor.white,
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.grey,
-                                              offset: Offset(2,2),
-                                              blurRadius: 5,
-                                            ),
-                                            BoxShadow(
-                                              color: Colors.white,
-                                              offset: Offset(-5,-5),
-                                              blurRadius: 5,
-                                            )
-                                          ]
-                                      ),
-                                      margin: EdgeInsets.only(right: 5),
-                                      padding: EdgeInsets.all(5),
-                                      child: Center(child: Text("${data[index]}")),
-                                    ),
-                                  );
-                                },
-                              );
-                            }
-                            else {
-                              return Text("Loading ");
-                            }
-                          },
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        Container(
+                            child: IconButton(icon: Icon(Icons.cancel), onPressed: goBack,)
                         ),
-                      )
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 5),
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                    children: <Widget>[
-                      Container(
-                          width:60,
-                          child: Text("Color:")
-                      ),
-                      Container(
-                        height: 50,
-                        width: size.width -120,
-                        child: StreamBuilder(
-                          stream: _productBloc.colorsStream,
-                          initialData: _productBloc.colors,
-                          builder: (context, snapshot){
-                            if(snapshot.hasData){
-                              List<MColor> data = snapshot.data;
-                              return ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: data.length,
-                                itemBuilder: (context, index){
-                                  return InkWell(
-                                    onTap: ()=>setColor(data[index].name),
-                                    child: AnimatedContainer(
-                                      duration: Duration(milliseconds: 300),
-                                      height: 40,
-                                      width: 40,
-                                      decoration: BoxDecoration(
-                                          border: Border.all(width: 1,color: Colors.grey),
+                  Container(
+                    height: 30,
+                    child: Text("${_product.name}", style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 5),
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                            width:60,
+                            child: Text("Size")
+                        ),
+                        Container(
+                          height: 50,
+                          width: size.width -120,
+                          child: StreamBuilder(
+                            stream: _productBloc.sizesStream,
+                            initialData: _productBloc.sizes,
+                            builder: (context, snapshot){
+                              if(snapshot.hasData){
+                                List<String> data = snapshot.data;
+                                return ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: data.length,
+                                  itemBuilder: (context, index){
+                                    return InkWell(
+                                      onTap: ()=>setSize(data[index]),
+                                      child: AnimatedContainer(
+                                        duration: Duration(milliseconds: 300),
+                                        height: 40,
+                                        width: 40,
+                                        decoration: BoxDecoration(
+                                            border: Border.all(width: 1,color: Colors.grey),
                                           borderRadius: BorderRadius.circular(5),
-                                          gradient:
-                                          selectedColor == data[index].name ?
-                                          LinearGradient(
-                                            begin: Alignment.topRight,
-                                            end: Alignment.bottomLeft,
-                                            colors: [
-                                              Color.fromRGBO(data[index].r,
-                                                  data[index].g,
-                                                  data[index].b,
-                                                  data[index].o*1.0),
-                                              Color.fromRGBO(data[index].r,
+                                          color: selectedSize == data[index] ? MyColor.firstColor : MyColor.white,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.grey,
+                                                offset: Offset(2,2),
+                                                blurRadius: 5,
+                                              ),
+                                              BoxShadow(
+                                                color: Colors.white,
+                                                offset: Offset(-5,-5),
+                                                blurRadius: 5,
+                                              )
+                                            ]
+                                        ),
+                                        margin: EdgeInsets.only(right: 5),
+                                        padding: EdgeInsets.all(5),
+                                        child: Center(child: Text("${data[index]}")),
+                                      ),
+                                    );
+                                  },
+                                );
+                              }
+                              else {
+                                return Shimmer.fromColors(
+                                  baseColor: Colors.grey[300],
+                                  highlightColor: Colors.white,
+                                  child: Container(
+                                    margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                                    width: 120.0,
+                                    height: 140,
+                                    color: Colors.white,
+                                  ),
+                                );;
+                              }
+                            },
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 5),
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                            width:60,
+                            child: Text("Color:")
+                        ),
+                        Container(
+                          height: 50,
+                          width: size.width -120,
+                          child: StreamBuilder(
+                            stream: _productBloc.colorsStream,
+                            initialData: _productBloc.colors,
+                            builder: (context, snapshot){
+                              if(snapshot.hasData){
+                                List<MColor> data = snapshot.data;
+                                return ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: data.length,
+                                  itemBuilder: (context, index){
+                                    return InkWell(
+                                      onTap: ()=>setColor(data[index].name),
+                                      child: AnimatedContainer(
+                                        duration: Duration(milliseconds: 300),
+                                        height: 40,
+                                        width: 40,
+                                        decoration: BoxDecoration(
+                                            border: Border.all(width: 1,color: Colors.grey),
+                                            borderRadius: BorderRadius.circular(5),
+                                            gradient:
+                                            selectedColor == data[index].name ?
+                                            LinearGradient(
+                                              begin: Alignment.topRight,
+                                              end: Alignment.bottomLeft,
+                                              colors: [
+                                                Color.fromRGBO(data[index].r,
                                                     data[index].g,
                                                     data[index].b,
-                                                    data[index].o*1.0)
-                                            ],
-                                          ): LinearGradient(
-                                            begin: Alignment.bottomLeft,
-                                            end: Alignment.topRight,
-                                            colors: [
-                                              Colors.white,
-                                              Color.fromRGBO(data[index].r,
-                                                  data[index].g,
-                                                  data[index].b,
-                                                  data[index].o*.5)
-                                            ],
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.grey,
-                                              offset: Offset(2,2),
-                                              blurRadius: 5,
+                                                    data[index].o*1.0),
+                                                Color.fromRGBO(data[index].r,
+                                                      data[index].g,
+                                                      data[index].b,
+                                                      data[index].o*1.0)
+                                              ],
+                                            ): LinearGradient(
+                                              begin: Alignment.bottomLeft,
+                                              end: Alignment.topRight,
+                                              colors: [
+                                                Colors.white,
+                                                Color.fromRGBO(data[index].r,
+                                                    data[index].g,
+                                                    data[index].b,
+                                                    data[index].o*.5)
+                                              ],
                                             ),
-                                            BoxShadow(
-                                              color: Colors.white,
-                                              offset: Offset(-5,-5),
-                                              blurRadius: 5,
-                                            )
-                                          ]
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.grey,
+                                                offset: Offset(2,2),
+                                                blurRadius: 5,
+                                              ),
+                                              BoxShadow(
+                                                color: Colors.white,
+                                                offset: Offset(-5,-5),
+                                                blurRadius: 5,
+                                              )
+                                            ]
+                                        ),
+                                        margin: EdgeInsets.only(right: 5),
+                                        padding: EdgeInsets.all(5),
                                       ),
-                                      margin: EdgeInsets.only(right: 5),
-                                      padding: EdgeInsets.all(5),
-                                    ),
-                                  );
-                                },
-                              );
-                            }
-                            else {
-                              return Text("Loading ");
-                            }
-                          },
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 5),
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                    children: <Widget>[
-                      Container(
-                          width:60,
-                          child: Text("Amount:")
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          InkWell(
-                            onTap: () => subAmount(),
-                            child: Container(
-                              height: 40,
-                              width: 40,
-                              decoration: BoxDecoration(
-                                border: Border.all(width: 1,color: Colors.grey),
-                                borderRadius: BorderRadius.circular(5),
-                                  color: MyColor.white,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey,
-                                      offset: Offset(2,2),
-                                      blurRadius: 5,
-                                    ),
-                                    BoxShadow(
-                                      color: Colors.white,
-                                      offset: Offset(-5,-5),
-                                      blurRadius: 5,
-                                    )
-                                  ]
-                              ),
-                              margin: EdgeInsets.only(right: 5),
-                              padding: EdgeInsets.all(5),
-                              child: Icon(Icons.remove),
-                            ),
-                          ),
-                          Container(
-                            height: 40,
-                            width: 40,
-                            decoration: BoxDecoration(
-                              border: Border.all(width: 1,color: Colors.grey),
-                              borderRadius: BorderRadius.circular(5),
-                                color: MyColor.white,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey,
-                                    offset: Offset(2,2),
-                                    blurRadius: 5,
-                                  ),
-                                  BoxShadow(
+                                    );
+                                  },
+                                );
+                              }
+                              else {
+                                return Shimmer.fromColors(
+                                  baseColor: Colors.grey[300],
+                                  highlightColor: Colors.white,
+                                  child: Container(
+                                    margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                                    width: 120.0,
+                                    height: 140,
                                     color: Colors.white,
-                                    offset: Offset(-5,-5),
-                                    blurRadius: 5,
-                                  )
-                                ]
-                            ),
-                            margin: EdgeInsets.only(right: 5),
-                            padding: EdgeInsets.all(5),
-                            child: Center(child: Text(amount.toString()),),
+                                  ),
+                                );
+                              }
+                            },
                           ),
-                          InkWell(
-                            onTap: addAmount,
-                            child: Container(
+                        )
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 5),
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                            width:60,
+                            child: Text("Amount:")
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            InkWell(
+                              onTap: () => subAmount(),
+                              child: Container(
+                                height: 40,
+                                width: 40,
+                                decoration: BoxDecoration(
+                                  border: Border.all(width: 1,color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(5),
+                                    color: MyColor.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey,
+                                        offset: Offset(2,2),
+                                        blurRadius: 5,
+                                      ),
+                                      BoxShadow(
+                                        color: Colors.white,
+                                        offset: Offset(-5,-5),
+                                        blurRadius: 5,
+                                      )
+                                    ]
+                                ),
+                                margin: EdgeInsets.only(right: 5),
+                                padding: EdgeInsets.all(5),
+                                child: Icon(Icons.remove),
+                              ),
+                            ),
+                            Container(
                               height: 40,
                               width: 40,
                               decoration: BoxDecoration(
@@ -348,30 +343,57 @@ class _BottomSheetConfirmState extends State<BottomSheetConfirm> {
                               ),
                               margin: EdgeInsets.only(right: 5),
                               padding: EdgeInsets.all(5),
-                              child: Icon(Icons.add),
+                              child: Center(child: Text(amount.toString()),),
                             ),
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 20,),
-                InkWell(
-                  onTap: addToCart,
-                  child: Container(
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: MyColor.firstColor,
-                      borderRadius: BorderRadius.circular(5),
+                            InkWell(
+                              onTap: addAmount,
+                              child: Container(
+                                height: 40,
+                                width: 40,
+                                decoration: BoxDecoration(
+                                  border: Border.all(width: 1,color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(5),
+                                    color: MyColor.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey,
+                                        offset: Offset(2,2),
+                                        blurRadius: 5,
+                                      ),
+                                      BoxShadow(
+                                        color: Colors.white,
+                                        offset: Offset(-5,-5),
+                                        blurRadius: 5,
+                                      )
+                                    ]
+                                ),
+                                margin: EdgeInsets.only(right: 5),
+                                padding: EdgeInsets.all(5),
+                                child: Icon(Icons.add),
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
                     ),
-                  child: Center(child: Text("Add to cart", style: TextStyle(color: Colors.white, fontSize: 22),),),
                   ),
-                )
-              ],
+                  SizedBox(height: 20,),
+                  InkWell(
+                    onTap: addToCart,
+                    child: Container(
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: MyColor.firstColor,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    child: Center(child: Text("Add to cart", style: TextStyle(color: Colors.white, fontSize: 22),),),
+                    ),
+                  )
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

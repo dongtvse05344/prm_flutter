@@ -50,26 +50,21 @@ class _MyAppState extends State<MyApp> {
         )
       ],
       child: MaterialApp(
-        title: 'Flutter Demo',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
+        theme: ThemeData.from(
+          colorScheme: const ColorScheme.light(),
+        )
+            .copyWith(
+          pageTransitionsTheme: const PageTransitionsTheme(
+            builders: <TargetPlatform, PageTransitionsBuilder>{
+              TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+            },
+          ),
         ),
+        debugShowCheckedModeBanner: false,
       home: HomeScreen(),
 //        home: MessagingDemo(),
       ),
     );
-  }
-}
-
-class Message {
-  String title;
-  String body;
-  String message;
-  Message(title, body, message) {
-    this.title = title;
-    this.body = body;
-    this.message = message;
   }
 }
 

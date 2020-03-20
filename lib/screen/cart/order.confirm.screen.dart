@@ -39,6 +39,7 @@ class _OrderConfirmScreenState extends State<OrderConfirmScreen> {
     data.orderDetailCMs = orderDetai;
     var result = await _orderBloc.createOrder(data,_authBloc.token);
     if(result) {
+      _cartBloc.clearAll();
       Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => OrderDoneScreen()
       ));

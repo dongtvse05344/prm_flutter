@@ -47,4 +47,8 @@ class CartBloc with ChangeNotifier {
       print("-- cart remove");
     }
   }
+  void clearAll() {
+    _cart.clear();
+    _order = Order();
+  }
 }

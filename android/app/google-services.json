@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:869771014887:android:3b793b082a827c93342842",
         "android_client_info": {
-          "package_name": "com.example.bridge"
+          "package_name": "com.shuu.prm_flutter"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "869771014887-0i7tv81i1q8i79n137n6uc1t3c1mert4.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.bridge",
+            "package_name": "com.shuu.prm_flutter",
             "certificate_hash": "ab332ce99fafe3ef221798af763c76e7f57e69b9"
           }
         },
@@ -36,7 +36,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "869771014887-94e0aeb0lf8fl8e12i6ne38eo4vn9jt3.apps.googleusercontent.com",
+              "client_id": "869771014887-rg02q1bstg2ggt9p3tju5qc62000ekuo.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
@@ -52,6 +52,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "869771014887-l5tbhq2da3mbrtfi6r8fuiqv8v0fm2hc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shuu.prm_flutter",
+            "certificate_hash": "ab332ce99fafe3ef221798af763c76e7f57e69b9"
+          }
+        },
+        {
           "client_id": "869771014887-94e0aeb0lf8fl8e12i6ne38eo4vn9jt3.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -65,7 +73,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "869771014887-94e0aeb0lf8fl8e12i6ne38eo4vn9jt3.apps.googleusercontent.com",
+              "client_id": "869771014887-rg02q1bstg2ggt9p3tju5qc62000ekuo.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

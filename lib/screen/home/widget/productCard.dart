@@ -40,11 +40,14 @@ class _ProductCardState extends State<ProductCard> {
               decoration: MyStyle.upBox,
               child: Row(
                 children: <Widget>[
-                  Image.network(
-                    "${Env.imageEndPoint}${widget.product.bannerPath}",
-                    width: 100,
-                    height: double.infinity,
-                    fit: BoxFit.cover,
+                  Hero(
+                    tag:"ProductBanner${widget.product.bannerPath}",
+                    child: Image.network(
+                      "${Env.imageEndPoint}${widget.product.bannerPath}",
+                      width: 100,
+                      height: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 15, left: 10),

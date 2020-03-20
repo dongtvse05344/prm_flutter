@@ -14,6 +14,7 @@ import 'package:prm_flutter/style/colors.dart';
 import 'package:prm_flutter/style/myStyle.dart';
 import 'package:prm_flutter/style/texts.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final int id;
@@ -72,19 +73,19 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   }
 
   goToCartScreen() {
+
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) => CartScreen(),
     ));
   }
 
-  onAddToCart() {
+  onAddToCart(BuildContext context) {
     showModalBottomSheet<Null>(
         context: context,
         builder: (BuildContext context) {
-          return Theme(
-              data: Theme.of(context).copyWith(canvasColor: Colors.white),
-              child: BottomSheetConfirm());
-        });
+          return BottomSheetConfirm();
+        }).then((rs) {
+    });
   }
 
   @override
@@ -116,10 +117,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                   child: AnimatedSwitcher(
                                     duration: Duration(milliseconds: 300),
                                     child: _seletedImage == null
-                                        ? Image.network(
-                                            "${Env.imageEndPoint}${_product.bannerPath}",
-                                            fit: BoxFit.cover,
-                                          )
+                                        ? Hero(
+                                          tag: "ProductBanner${_product.bannerPath}",
+                                          child: Image.network(
+                                              "${Env.imageEndPoint}${_product.bannerPath}",
+                                              fit: BoxFit.cover,
+                                            ),
+                                        )
                                         : Image.network(
                                             "${Env.imageEndPoint}${_seletedImage}",
                                             fit: BoxFit.cover,
@@ -244,7 +248,16 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                               },
                                             );
                                           } else {
-                                            return Text("Loading ...");
+                                            return Shimmer.fromColors(
+                                              baseColor: Colors.grey[300],
+                                              highlightColor: Colors.white,
+                                              child: Container(
+                                                margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                                                width: 120.0,
+                                                height: 140,
+                                                color: Colors.white,
+                                              ),
+                                            );
                                           }
                                         }),
                                   ),
@@ -286,12 +299,21 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                               }
                                             } else {
                                               return Container(
-                                                child: Text("Loading ..."),
+                                                child: Shimmer.fromColors(
+                                                  baseColor: Colors.grey[300],
+                                                  highlightColor: Colors.white,
+                                                  child: Container(
+                                                    margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                                                    width: 120.0,
+                                                    height: 140,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
                                               );
                                             }
                                           })),
                                   Container(
-                                    height: 20,
+                                    height: 50,
                                     width: double.infinity,
                                   ),
                                 ],
@@ -301,7 +323,16 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         );
                       } else {
                         return Container(
-                          child: Text("Loading ..."),
+                          child: Shimmer.fromColors(
+                            baseColor: Colors.grey[300],
+                            highlightColor: Colors.white,
+                            child: Container(
+                              margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                              width: 120.0,
+                              height: 140,
+                              color: Colors.white,
+                            ),
+                          ),
                         );
                       }
                     }),
@@ -359,7 +390,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: InkWell(
-                  onTap: onAddToCart,
+                  onTap: ()=>onAddToCart(context),
                   child: Container(
                     decoration: BoxDecoration(
                         color: MyColor.firstColor,

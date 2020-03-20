@@ -23,25 +23,27 @@ class _LoginScreenState extends State<LoginScreen> {
 //  final FacebookLogin facebookLogin = FacebookLogin();
   final FirebaseMessaging _fcm = FirebaseMessaging();
 
-  Future<FirebaseUser> signInWithGoogle() async {
+  Future<GoogleSignInAccount> signInWithGoogle() async {
+    googleSignIn.signOut();
     final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
     final GoogleSignInAuthentication googleSignInAuthentication =
     await googleSignInAccount.authentication;
+//    final AuthCredential credential = GoogleAuthProvider.getCredential(
+//      accessToken: googleSignInAuthentication.accessToken,
+//      idToken: googleSignInAuthentication.idToken,
+//    );
+//
+//    final AuthResult authResult = await _auth.signInWithCredential(credential);
+//    final FirebaseUser user = authResult.user;
+//
+//    assert(!user.isAnonymous);
+//    assert(await user.getIdToken() != null);
+//
+//    final FirebaseUser currentUser = await _auth.currentUser();
+//    assert(user.uid == currentUser.uid);
+//    return user;
+    return googleSignInAccount;
 
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
-      accessToken: googleSignInAuthentication.accessToken,
-      idToken: googleSignInAuthentication.idToken,
-    );
-
-    final AuthResult authResult = await _auth.signInWithCredential(credential);
-    final FirebaseUser user = authResult.user;
-
-    assert(!user.isAnonymous);
-    assert(await user.getIdToken() != null);
-
-    final FirebaseUser currentUser = await _auth.currentUser();
-    assert(user.uid == currentUser.uid);
-    return user;
   }
 
   Future<FirebaseUser> signInWithFacebook() async {
@@ -67,8 +69,9 @@ class _LoginScreenState extends State<LoginScreen> {
   void ggSignIn() {
     signInWithGoogle().then((rs)=>{
       googleSignIn.signOut(),
-      _authBloc.googleSignin(rs.email, rs.uid, rs.email,rs.displayName,rs.phoneNumber, tokenListener)
+      _authBloc.googleSignin(rs.email, rs.email, rs.email,rs.displayName,null, tokenListener)
     }).catchError((e)=>{
+      print(e),
         MessageDialog.showMessageDialog(context, "Error", "Unable to connect to server"),
     });
   }
