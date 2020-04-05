@@ -19,15 +19,22 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn googleSignIn = GoogleSignIn();
+  final GoogleSignIn googleSignIn = GoogleSignIn(
+    scopes: [
+      'email',
+      'https://www.googleapis.com/auth/contacts.readonly',
+    ],
+  );
 //  final FacebookLogin facebookLogin = FacebookLogin();
   final FirebaseMessaging _fcm = FirebaseMessaging();
 
   Future<GoogleSignInAccount> signInWithGoogle() async {
     googleSignIn.signOut();
     final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
-    final GoogleSignInAuthentication googleSignInAuthentication =
-    await googleSignInAccount.authentication;
+    print("GG login");
+
+//    final GoogleSignInAuthentication googleSignInAuthentication =
+//    await googleSignInAccount.authentication;
 //    final AuthCredential credential = GoogleAuthProvider.getCredential(
 //      accessToken: googleSignInAuthentication.accessToken,
 //      idToken: googleSignInAuthentication.idToken,
@@ -43,7 +50,6 @@ class _LoginScreenState extends State<LoginScreen> {
 //    assert(user.uid == currentUser.uid);
 //    return user;
     return googleSignInAccount;
-
   }
 
   Future<FirebaseUser> signInWithFacebook() async {
@@ -58,22 +64,28 @@ class _LoginScreenState extends State<LoginScreen> {
 //    }
   }
 
-  void signOutGoogle() async{
+  void signOutGoogle() async {
     await googleSignIn.signOut();
 
     print("User Sign Out");
   }
+
   void fbSignIn() {
     signInWithFacebook();
   }
+
   void ggSignIn() {
-    signInWithGoogle().then((rs)=>{
-      googleSignIn.signOut(),
-      _authBloc.googleSignin(rs.email, rs.email, rs.email,rs.displayName,null, tokenListener)
-    }).catchError((e)=>{
-      print(e),
-        MessageDialog.showMessageDialog(context, "Error", "Unable to connect to server"),
-    });
+    signInWithGoogle()
+        .then((rs) => {
+              googleSignIn.signOut(),
+              _authBloc.googleSignin(rs.email, rs.email, rs.email,
+                  rs.displayName, null, tokenListener)
+            })
+        .catchError((e) => {
+              print(e),
+              MessageDialog.showMessageDialog(
+                  context, "Error", "Unable to connect to server"),
+            });
   }
 
   AuthBloc _authBloc;
@@ -81,8 +93,9 @@ class _LoginScreenState extends State<LoginScreen> {
   final FocusNode _passwordfocusNode = FocusNode();
   final TextEditingController _usernameController = new TextEditingController();
   final TextEditingController _passwordController = new TextEditingController();
-  String _appLabel = "Start and in relaxation with the in-depth cultural tour of your pet in daily day ( Ho Chi Minh only) ";
-  final ScrollController _scrollController = new  ScrollController();
+  String _appLabel =
+      "Start and in relaxation with the in-depth cultural tour of your pet in daily day ( Ho Chi Minh only) ";
+  final ScrollController _scrollController = new ScrollController();
   bool isExtend = true;
 
   usernameTap() {
@@ -101,10 +114,11 @@ class _LoginScreenState extends State<LoginScreen> {
     var username = _usernameController.text;
     var password = _passwordController.text;
     var deviceId = await _fcm.getToken();
-    _authBloc.fetchToken(username, password, deviceId,tokenListener);
+    _authBloc.fetchToken(username, password, deviceId, tokenListener);
   }
+
   tokenListener(data) {
-    switch(data) {
+    switch (data) {
       case AuthBloc.START:
         LoadingDialog.showLoadingDialog(context, "Login ...");
         break;
@@ -117,6 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.of(context).pop();
     }
   }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -124,6 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _usernamefocusNode.addListener(usernameTap);
     _passwordfocusNode.addListener(usernameTap);
   }
+
   @override
   Widget build(BuildContext context) {
     _authBloc = Provider.of<AuthBloc>(context);
@@ -143,135 +159,138 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
           SingleChildScrollView(
-            controller: _scrollController,
+              controller: _scrollController,
               child: Column(
-            children: <Widget>[
-              AnimatedContainer(
-                duration: Duration(milliseconds: 200),
-                height: isExtend? size.height * 0.4:size.height * 0.1 ,
-              ),
-              Container(
-                height: size.height * 0.2,
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      "Welcome",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 42,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 15),
-                      width: double.infinity,
-                      child: Text(
-                        _appLabel
-                        ,
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Container(
-                height: size.height * 0.2,
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                decoration: BoxDecoration(
-                ),
-                child: Column(
-                  children: <Widget>[
-                    TextFormField(
-                      controller: _usernameController,
-                      focusNode: _usernamefocusNode,
-                      cursorColor: Color(0xffcccccc),
-                      style: TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        labelText: 'Username',
-                        labelStyle: TextStyle(color: Color(0xffcccccc)),
-                        focusColor: Colors.white,
-                        fillColor: Colors.white,
-                        enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xffcccccc))),
-                        focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white)),
-                      ),
-                    ),
-                    Stack(
+                children: <Widget>[
+                  AnimatedContainer(
+                    duration: Duration(milliseconds: 200),
+                    height: isExtend ? size.height * 0.4 : size.height * 0.1,
+                  ),
+                  Container(
+                    height: size.height * 0.2,
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
-                        TextFormField(
-                          controller: _passwordController,
-                          focusNode: _passwordfocusNode,
-                          obscureText: true,
-                          cursorColor: Color(0xffcccccc),
-                          style: TextStyle(color: Colors.white),
-                          decoration: InputDecoration(
-                            labelText: 'Password',
-
-                            labelStyle: TextStyle(color: Color(0xffcccccc)),
-                            focusColor: Colors.white,
-                            fillColor: Colors.white,
-                            enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Color(0xffcccccc))),
-                            focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.white)),
-                          ),
+                        Text(
+                          "Welcome",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 42,
+                              fontWeight: FontWeight.bold),
                         ),
-                        Positioned(
-                          right: 0,
-                          bottom: 20,
+                        Container(
+                          margin: EdgeInsets.only(top: 15),
+                          width: double.infinity,
                           child: Text(
-                            "Forgot Password ?",
-                            style: TextStyle(color: Color(0xffcccccc)),
+                            _appLabel,
+                            style: TextStyle(color: Colors.white),
                           ),
                         )
                       ],
                     ),
-
-                  ],
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    InkWell(
-                        onTap: _onLoginButtonClick,
-                        child: LoginButton("Sign In")
+                  ),
+                  Container(
+                    height: size.height * 0.2,
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(),
+                    child: Column(
+                      children: <Widget>[
+                        TextFormField(
+                          controller: _usernameController,
+                          focusNode: _usernamefocusNode,
+                          cursorColor: Color(0xffcccccc),
+                          style: TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            labelText: 'Username',
+                            labelStyle: TextStyle(color: Color(0xffcccccc)),
+                            focusColor: Colors.white,
+                            fillColor: Colors.white,
+                            enabledBorder: UnderlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Color(0xffcccccc))),
+                            focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.white)),
+                          ),
+                        ),
+                        Stack(
+                          children: <Widget>[
+                            TextFormField(
+                              controller: _passwordController,
+                              focusNode: _passwordfocusNode,
+                              obscureText: true,
+                              cursorColor: Color(0xffcccccc),
+                              style: TextStyle(color: Colors.white),
+                              decoration: InputDecoration(
+                                labelText: 'Password',
+                                labelStyle: TextStyle(color: Color(0xffcccccc)),
+                                focusColor: Colors.white,
+                                fillColor: Colors.white,
+                                enabledBorder: UnderlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Color(0xffcccccc))),
+                                focusedBorder: UnderlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Colors.white)),
+                              ),
+                            ),
+                            Positioned(
+                              right: 0,
+                              bottom: 20,
+                              child: Text(
+                                "Forgot Password ?",
+                                style: TextStyle(color: Color(0xffcccccc)),
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
                     ),
-                    Row(
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         InkWell(
-                            onTap: fbSignIn,
-                            child: SocialButton(FontAwesomeIcons.facebookF)
-                        ),
-                        SizedBox(width: 10,),
-                        InkWell(
-                            onTap: ggSignIn,
-                            child: SocialButton(FontAwesomeIcons.google)),
+                            onTap: _onLoginButtonClick,
+                            child: LoginButton("Sign In")),
+                        Row(
+                          children: <Widget>[
+                            InkWell(
+                                onTap: fbSignIn,
+                                child:
+                                    SocialButton(FontAwesomeIcons.facebookF)),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            InkWell(
+                                onTap: ggSignIn,
+                                child: SocialButton(FontAwesomeIcons.google)),
+                          ],
+                        )
                       ],
-                    )
-
-                  ],
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.only(top: 10),
-                child: Column(
-
-                  children: <Widget>[
-                    Text("Or",style: TextStyle(color: Colors.white)),
-                    InkWell(
-                        onTap: gotoSignup,
-                        child: Text("Sign Up",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 18),)
                     ),
-                  ],
-                ),
-              )
-            ],
-          )),
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(top: 10),
+                    child: Column(
+                      children: <Widget>[
+                        Text("Or", style: TextStyle(color: Colors.white)),
+                        InkWell(
+                            onTap: gotoSignup,
+                            child: Text(
+                              "Sign Up",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18),
+                            )),
+                      ],
+                    ),
+                  )
+                ],
+              )),
         ],
       ),
     );
@@ -281,6 +300,4 @@ class _LoginScreenState extends State<LoginScreen> {
   void dispose() {
     super.dispose();
   }
-
-
 }

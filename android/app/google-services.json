@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:869771014887:android:3b793b082a827c93342842",
         "android_client_info": {
-          "package_name": "com.shuu.prm_flutter"
+          "package_name": "com.example.bridge"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "869771014887-0i7tv81i1q8i79n137n6uc1t3c1mert4.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.shuu.prm_flutter",
+            "package_name": "com.example.bridge",
             "certificate_hash": "ab332ce99fafe3ef221798af763c76e7f57e69b9"
           }
         },
@@ -52,11 +52,27 @@
       },
       "oauth_client": [
         {
-          "client_id": "869771014887-l5tbhq2da3mbrtfi6r8fuiqv8v0fm2hc.apps.googleusercontent.com",
+          "client_id": "869771014887-9222f4aa903vkaci1tu6sguubhtqf0v9.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.shuu.prm_flutter",
             "certificate_hash": "ab332ce99fafe3ef221798af763c76e7f57e69b9"
+          }
+        },
+        {
+          "client_id": "869771014887-5j990n4ifj1921tpf0t8rlphrntupjja.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shuu.prm_flutter",
+            "certificate_hash": "c5cbe1278276c13d47316169b56f8826ca459ab3"
+          }
+        },
+        {
+          "client_id": "869771014887-gh4hlhbkqefi7fkp3r1ctbmki3lh8j6f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shuu.prm_flutter",
+            "certificate_hash": "eb0b829afe93593c3b2bc28f38b2bae728fe2234"
           }
         },
         {

@@ -169,9 +169,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                   SizedBox(
                                     height: 10,
                                   ),
-                                  Text(
-                                    "${_product.name}",
-                                    style: MyText.pageTitle,
+                                  Hero(
+                                    tag:"ProName${_product.name}",
+                                    child: Text(
+                                      "${_product.name}",
+                                      style: MyText.pageTitle,
+                                    ),
                                   ),
                                   Text(
                                     "${_product.description}",

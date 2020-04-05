@@ -54,12 +54,18 @@ class _ProductCardState extends State<ProductCard> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Container(
-                          width: 140,
-                            child: Text(
-                          widget.product.name,
-                          style: MyText.cardTitle,
-                        )),
+                        Hero(
+                          tag:"ProName${widget.product.name}",
+                          child: Material(
+                            color: MyColor.white,
+                            child: Container(
+                              width: 140,
+                                child: Text(
+                              widget.product.name,
+                              style: MyText.cardTitle,
+                            )),
+                          ),
+                        ),
                         SizedBox(
                           height: 5,
                         ),
